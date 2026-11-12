@@ -31,7 +31,7 @@ const description =
       <ul class="sol">
         {
           solutions.map((s, i) => (
-            <li data-reveal style={`--i:${i % 2}`}>
+            <li data-reveal="open" style={`--i:${i % 2}`}>
               <a href={`/solutions/${s.slug}/`} class="sol__item">
                 <span class="icon-tile">
                   <Icon name={s.icon} />
@@ -48,7 +48,7 @@ const description =
             </li>
           ))
         }
-        <li data-reveal>
+        <li data-reveal="open">
           <a href="/ai-calling-agent/" class="sol__item sol__item--dark">
             <span class="icon-tile"><Icon name="AudioLines" /></span>
             <div class="sol__main">

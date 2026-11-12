@@ -28,7 +28,7 @@ const process = [
       </div>
       <div class="prose" data-reveal>
         <p class="big">
-          LucidAccuracy is a global solutions provider. We partner with organizations to deliver workforce, technology,
+          LucidAccuracy (Lucid Accuracy) is a global solutions provider. We partner with organizations to deliver workforce, technology,
           training and business process solutions that scale and stay compliant.
         </p>
         <p>
@@ -52,7 +52,7 @@ const process = [
       <ul class="panels">
         {
           pillars.map((p, i) => (
-            <li data-reveal style={`--i:${i}`}>
+            <li data-reveal="open" style={`--i:${i}`}>
               <a class="panel" href={p.href}>
                 <p class="tag">{p.label}</p>
                 <h3>{p.title}</h3>
@@ -103,19 +103,6 @@ const process = [
     </div>
   </section>
 
-  <section class="section section--sand section--tight">
-    <div class="wrap partner" data-reveal>
-      <div>
-        <h2>Strategic partner: {site.partner.name}</h2>
-        <p>
-          {site.partner.name} extends LucidAccuracy's capabilities with global workforce and business support solutions
-          across international markets.
-        </p>
-      </div>
-      <a class="btn btn--ghost" href={site.partner.url} rel="noopener">Visit {site.partner.name} <Icon name="ArrowUpRight" /></a>
-    </div>
-  </section>
-
   <Cta />
 </Base>
 
@@ -139,20 +126,5 @@ const process = [
     .steps--3 {
       grid-template-columns: repeat(3, 1fr);
     }
-  }
-  .partner {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px 48px;
-  }
-  .partner h2 {
-    font-size: clamp(1.5rem, 2.4vw, 2rem);
-    margin-bottom: 10px;
-  }
-  .partner p {
-    color: var(--ink-2);
-    max-width: 60ch;
   }
 </style>

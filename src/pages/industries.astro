@@ -4,6 +4,8 @@ import PageHero from '../components/PageHero.astro';
 import Icon from '../components/Icon.astro';
 import Cta from '../components/Cta.astro';
 import { industries } from '../data/site';
+import photos from '../data/photos.json';
+const pics = photos as Record<string, { src: string; placeholder: string }>;
 const crumbs = [{ name: 'Industries', href: '/industries/' }];
 ---
 
@@ -26,15 +28,32 @@ const crumbs = [{ name: 'Industries', href: '/industries/' }];
       <ul class="ind">
         {
           industries.map((ind, i) => (
-            <li id={ind.slug} data-reveal style={`--i:${i % 2}`}>
-              <span class="ind__icon"><Icon name={ind.icon} size={28} stroke-width={1.6} /></span>
-              <div class="ind__main">
+            <li id={ind.slug} class:list={[{ 'ind--flip': i % 2 === 1 }]}>
+              <figure class="ind__media" data-reveal="open">
+                {pics[ind.slug] ? (
+                  <img
+                    src={pics[ind.slug].src}
+                    alt=""
+                    width="960"
+                    height="640"
+                    loading={i < 2 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    style={`background-image:url(${pics[ind.slug].placeholder})`}
+                  />
+                ) : (
+                  <span class="ind__art">
+                    <Icon name={ind.icon} size={88} stroke-width={1} />
+                  </span>
+                )}
+                <span class="ind__badge"><Icon name={ind.icon} size={22} /></span>
+              </figure>
+              <div class="ind__main" data-reveal={i % 2 ? 'left' : 'right'}>
                 <h2>{ind.name}</h2>
                 <p>{ind.text}</p>
+                <ul class="chips">
+                  {ind.roles.map((r) => <li class="chip">{r}</li>)}
+                </ul>
               </div>
-              <ul class="chips">
-                {ind.roles.map((r) => <li class="chip">{r}</li>)}
-              </ul>
             </li>
           ))
         }
@@ -49,21 +68,21 @@ const crumbs = [{ name: 'Industries', href: '/industries/' }];
         <p data-reveal style="--i:1">The same three businesses, adapted to the sector.</p>
       </div>
       <ul class="panels">
-        <li data-reveal>
+        <li data-reveal="open">
           <a class="panel" href="/solutions/recruitment-workforce/">
             <span class="icon-tile"><Icon name="Users" /></span>
             <h3>Recruitment & Workforce</h3>
             <p>Permanent, contract and flexible hiring for specialist and volume roles.</p>
           </a>
         </li>
-        <li data-reveal style="--i:1">
+        <li data-reveal="open" style="--i:1">
           <a class="panel" href="/solutions/technology/">
             <span class="icon-tile"><Icon name="Code" /></span>
             <h3>Technology Solutions</h3>
             <p>Software, cloud, data and security projects built for the sector's systems.</p>
           </a>
         </li>
-        <li data-reveal style="--i:2">
+        <li data-reveal="open" style="--i:2">
           <a class="panel" href="/ai-calling-agent/">
             <span class="icon-tile"><Icon name="AudioLines" /></span>
             <h3>LucidAI Calling Agent</h3>
@@ -83,41 +102,70 @@ const crumbs = [{ name: 'Industries', href: '/industries/' }];
   }
   .ind > li {
     display: grid;
-    gap: 16px 40px;
-    padding: clamp(24px, 3vw, 40px) 0;
+    gap: 28px 64px;
+    align-items: center;
+    padding: clamp(32px, 4vw, 56px) 0;
     border-bottom: 1px solid var(--line);
     scroll-margin-top: calc(var(--header-h) + 8px);
-    transition: background-color 0.4s;
   }
-  .ind > li:target {
-    background: var(--teal-tint);
-    box-shadow: 0 0 0 100vmax var(--teal-tint);
-    clip-path: inset(0 -100vmax);
+  .ind__media {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: var(--night);
   }
-  .ind__icon {
+  .ind__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background-size: cover;
+    transition: transform 1.2s var(--ease);
+  }
+  .ind > li:hover .ind__media img {
+    transform: scale(1.04);
+  }
+  .ind__art {
     display: grid;
     place-items: center;
-    width: 60px;
-    height: 60px;
-    border-radius: 16px;
-    background: var(--teal-tint);
+    height: 100%;
+    color: var(--teal-bright);
+    background:
+      radial-gradient(circle at 30% 30%, hsl(168 65% 34% / 0.5), transparent 60%),
+      var(--night);
+  }
+  .ind__badge {
+    position: absolute;
+    left: 18px;
+    bottom: 18px;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     color: var(--teal-deep);
   }
+  .ind > li:target .ind__media {
+    box-shadow: 0 0 0 3px var(--amber);
+  }
   .ind h2 {
-    font-size: clamp(1.5rem, 2.4vw, 2rem);
-    margin-bottom: 10px;
+    font-size: clamp(1.625rem, 2.6vw, 2.25rem);
+    margin-bottom: 12px;
   }
   .ind__main p {
     color: var(--ink-2);
-    max-width: 54ch;
-  }
-  .ind .chips {
-    align-content: start;
+    max-width: 52ch;
+    margin-bottom: 20px;
   }
   @media (min-width: 900px) {
     .ind > li {
-      grid-template-columns: 60px minmax(0, 1fr) minmax(0, 0.9fr);
-      align-items: start;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+    .ind--flip .ind__media {
+      order: 2;
     }
   }
 </style>

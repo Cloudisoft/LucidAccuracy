@@ -2,7 +2,7 @@
 // client-side page transitions, and is torn down through one AbortController.
 
 import Lenis from 'lenis';
-import { initNetworks, initCounters, initProgress } from './effects';
+import { initCounters, initProgress } from './effects';
 
 
 
@@ -80,6 +80,47 @@ function initHeader(signal: AbortSignal) {
   button.addEventListener('click', () => setMenu(button.getAttribute('aria-expanded') !== 'true'), { signal });
   document.addEventListener('keydown', (e) => e.key === 'Escape' && setMenu(false), { signal });
   window.matchMedia('(min-width: 1240px)').addEventListener('change', () => setMenu(false), { signal });
+}
+
+// Day/night toggle. The new theme spreads out in a circle from the button.
+function initTheme(signal: AbortSignal) {
+  const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+  if (!button) return;
+  const root = document.documentElement;
+  const label = () =>
+    button.setAttribute('aria-label', root.dataset.theme === 'dark' ? 'Switch to day mode' : 'Switch to night mode');
+  label();
+  button.addEventListener(
+    'click',
+    () => {
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      const set = () => {
+        root.dataset.theme = next;
+        label();
+        try {
+          localStorage.setItem('theme', next);
+        } catch (e) {
+          /* storage blocked: the choice lasts for this page only */
+        }
+      };
+      const doc = document as Document & { startViewTransition?: (cb: () => void) => { ready: Promise<void>; finished: Promise<void> } };
+      if (!doc.startViewTransition) return set();
+      const r = button.getBoundingClientRect();
+      const x = r.left + r.width / 2;
+      const y = r.top + r.height / 2;
+      const end = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+      root.classList.add('theme-switching');
+      const vt = doc.startViewTransition(set);
+      vt.ready.then(() => {
+        root.animate(
+          { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${end}px at ${x}px ${y}px)`] },
+          { duration: 700, easing: 'cubic-bezier(0.65, 0, 0.35, 1)', pseudoElement: '::view-transition-new(root)' },
+        );
+      });
+      vt.finished.finally(() => root.classList.remove('theme-switching'));
+    },
+    { signal },
+  );
 }
 
 function initReveal(signal: AbortSignal) {
@@ -168,6 +209,40 @@ async function initGlobe(signal: AbortSignal) {
     return pts;
   });
 
+  // Connecting-dots network on the globe: cities across the markets we serve,
+  // each linked to its neighbours, with pulses travelling along the links.
+  const cities: [number, number][] = [
+    [40.7, -74], [37.8, -122.4], [41.9, -87.6], [32.8, -96.8], [33.7, -84.4], [47.6, -122.3], [38.6, -121.5], [41.7, -72.6], [40.9, -81.4], [25.8, -80.2], [39.7, -105],
+    [43.7, -79.4], [45.5, -73.6], [49.3, -123.1], [51, -114],
+    [51.5, -0.1], [53.5, -2.2], [55.9, -3.2],
+    [48.9, 2.4], [52.5, 13.4], [52.4, 4.9], [40.4, -3.7], [45.5, 9.2], [50.1, 8.7], [59.3, 18.1],
+    [19.1, 72.9], [28.6, 77.2], [12.97, 77.6], [17.4, 78.5], [13.1, 80.3], [18.5, 73.9],
+    [-33.9, 151.2], [-37.8, 145], [-27.5, 153], [-31.95, 115.9],
+  ];
+  const cityVecs = cities.map(([la, lo]) => toVec(la, lo));
+  const lift = (from: Vec, to: Vec, steps: number, height: number) => {
+    const dot = from[0] * to[0] + from[1] * to[1] + from[2] * to[2];
+    const omega = Math.acos(Math.max(-1, Math.min(1, dot)));
+    const pts: Vec[] = [];
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      const a = Math.sin((1 - t) * omega) / Math.sin(omega);
+      const b = Math.sin(t * omega) / Math.sin(omega);
+      const r = 1 + height * Math.sin(Math.PI * t);
+      pts.push([(a * from[0] + b * to[0]) * r, (a * from[1] + b * to[1]) * r, (a * from[2] + b * to[2]) * r]);
+    }
+    return pts;
+  };
+  const links: Vec[][] = [];
+  cityVecs.forEach((a, i) => {
+    const near = cityVecs
+      .map((b, j) => ({ j, d: Math.acos(Math.max(-1, Math.min(1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2]))) }))
+      .filter((n) => n.j > i && n.d < 0.42)
+      .sort((x, y) => x.d - y.d)
+      .slice(0, 3);
+    near.forEach((n) => links.push(lift(a, cityVecs[n.j], 14, 0.012 + n.d * 0.05)));
+  });
+
   let w = 0;
   let h = 0;
   let dpr = 1;
@@ -247,9 +322,51 @@ async function initGlobe(signal: AbortSignal) {
     }
     ctx.globalAlpha = 1;
 
-    // Arcs with a travelling pulse
     const time = now / 1000;
     ctx.lineCap = 'round';
+
+    // City network
+    links.forEach((pts, li) => {
+      const head = (time * 0.35 + li * 0.173) % 1.6;
+      for (let i = 1; i < pts.length; i++) {
+        project(pts[i - 1], p);
+        const x0 = p[0];
+        const y0 = p[1];
+        const z0 = p[2];
+        project(pts[i], p);
+        if (z0 <= 0.02 || p[2] <= 0.02) continue;
+        const t = i / pts.length;
+        const d = head - t;
+        const lit = d > 0 && d < 0.3 ? 1 - d / 0.3 : 0;
+        ctx.strokeStyle = `hsla(166, 70%, ${62 + lit * 20}%, ${(0.22 + lit * 0.7) * Math.min(1, p[2] * 2.5)})`;
+        ctx.lineWidth = 0.8 + lit * 1.2;
+        ctx.beginPath();
+        ctx.moveTo(cx + x0 * R, cy - y0 * R);
+        ctx.lineTo(cx + p[0] * R, cy - p[1] * R);
+        ctx.stroke();
+      }
+    });
+    cityVecs.forEach((v, i) => {
+      project(v, p);
+      if (p[2] <= 0.03) return;
+      const vis = Math.min(1, p[2] * 2.5);
+      const x = cx + p[0] * R;
+      const y = cy - p[1] * R;
+      const glow = (Math.sin(time * 2 + i) + 1) / 2;
+      ctx.globalAlpha = vis * 0.25 * glow;
+      ctx.fillStyle = 'hsl(166, 80%, 70%)';
+      ctx.beginPath();
+      ctx.arc(x, y, 3 + glow * 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = vis;
+      ctx.fillStyle = 'hsl(160, 60%, 88%)';
+      ctx.beginPath();
+      ctx.arc(x, y, Math.max(1.6, R * 0.0065), 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+
+    // Arcs with a travelling pulse
     arcs.forEach((pts, a) => {
       const head = (time * 0.22 + a * 0.27) % 1.35;
       for (let i = 1; i < pts.length; i++) {
@@ -652,12 +769,12 @@ function init() {
   document.documentElement.classList.add('js');
   initSmoothScroll(signal);
   initHeader(signal);
+  initTheme(signal);
   initReveal(signal);
   initSwitches(signal);
   initCallDemo(signal);
   initContactForm(signal);
   initGlobe(signal);
-  initNetworks(signal);
   initCounters(signal);
   initProgress(signal);
 }

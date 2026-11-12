@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import photos from '../data/photos.json';
+import { industries } from '../data/site';
+const crumbs = [{ name: 'Photo credits', href: '/credits/' }];
+const list = Object.entries(photos as Record<string, { src: string; by: string; licence: string; licenceUrl?: string; page: string; title: string }>).map(
+  ([slug, p]) => ({ ...p, slug, industry: industries.find((i) => i.slug === slug)?.name ?? slug }),
+);
+---
+
+<Base title="Photo Credits | LucidAccuracy" description="Sources and licences for the photographs used on the LucidAccuracy website." og="default" {crumbs}>
+  <PageHero title="Photo credits" lead="Industry photographs on this site come from Wikimedia Commons and are used under the licences below." {crumbs} />
+  <section class="section">
+    <div class="wrap">
+      <ul class="rows">
+        {
+          list.map((p) => (
+            <li>
+              <h3>{p.industry}</h3>
+              <p>
+                <a class="link" href={p.page} rel="noopener">
+                  {p.title}
+                </a>{' '}
+                by {p.by}.{' '}
+                {p.licenceUrl ? (
+                  <a class="link" href={p.licenceUrl} rel="noopener">
+                    {p.licence}
+                  </a>
+                ) : (
+                  p.licence
+                )}
+                {p.licence.includes('SA') && '. Cropped and resized; the adapted version is shared under the same licence.'}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>

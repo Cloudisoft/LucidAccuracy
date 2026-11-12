@@ -12,7 +12,6 @@ export const site = {
   email: 'Info@lucidaccuracy.com',
   phone: '+1 307-999-9564',
   phoneHref: 'tel:+13079999564',
-  partner: { name: 'Vantedge Global', url: 'https://vantedgeglobal.lucidaccuracy.com/' },
   // Add verified profiles here; the footer renders whatever is listed.
   social: [] as { label: string; url: string }[],
 };

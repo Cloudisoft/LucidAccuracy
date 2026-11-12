@@ -1,4 +1,5 @@
 ---
+import CareerField from '../components/CareerField.astro';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import CallDemo from '../components/CallDemo.astro';
@@ -44,7 +45,7 @@ const recent = [
 <Base {title} {description} og="ai-calling-agent" {crumbs} schema={[product, faqSchema(agent.faqs)]}>
   <!-- Hero -->
   <section class="ahero on-night has-net">
-    <canvas class="net" data-net aria-hidden="true"></canvas>
+    <CareerField />
     <div class="ahero__glow" aria-hidden="true"></div>
     <div class="wrap ahero__in">
       <div>
@@ -79,7 +80,7 @@ const recent = [
       <ul class="cells">
         {
           agent.capabilities.map((c, i) => (
-            <li data-reveal style={`--i:${i % 3}`}>
+            <li data-reveal="open" style={`--i:${i % 3}`}>
               <span class="icon-tile"><Icon name={c.icon} /></span>
               <h3>{c.name}</h3>
               <p>{c.text}</p>
@@ -120,7 +121,7 @@ const recent = [
       <ul class="uses">
         {
           agent.useCases.map((u, i) => (
-            <li data-reveal style={`--i:${i % 4}`}>
+            <li data-reveal="open" style={`--i:${i % 4}`}>
               <Icon name={u.icon} size={26} stroke-width={1.6} />
               <h3>{u.name}</h3>
               <p>{u.text}</p>

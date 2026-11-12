@@ -1,4 +1,5 @@
 ---
+import CareerField from './CareerField.astro';
 interface Props {
   title: string;
   lead?: string;
@@ -8,7 +9,7 @@ const { title, lead, crumbs = [] } = Astro.props;
 ---
 
 <section class="phero on-night has-net">
-  <canvas class="net" data-net aria-hidden="true"></canvas>
+  <CareerField />
   <div class="phero__rings" aria-hidden="true"></div>
   <div class="wrap phero__in">
     {

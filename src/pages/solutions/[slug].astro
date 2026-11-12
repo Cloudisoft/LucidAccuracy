@@ -145,7 +145,7 @@ const usModels = [
           </div>
           <ul class="cells">
             {techCapabilities.map((t, i) => (
-              <li data-reveal style={`--i:${i % 4}`}>
+              <li data-reveal="open" style={`--i:${i % 4}`}>
                 <span class="icon-tile">
                   <Icon name={t.icon} />
                 </span>
@@ -154,7 +154,7 @@ const usModels = [
               </li>
             ))}
           </ul>
-          <p class="markets" data-reveal>
+          <p class="markets" data-reveal="open">
             Looking for AI on the phone?{' '}
             <a class="link" href="/ai-calling-agent/">See the LucidAI Calling Agent</a>
           </p>
@@ -168,7 +168,7 @@ const usModels = [
       <div class="split__head">
         <h2 data-reveal="mask">Questions about {s.nav.toLowerCase().replace('& ', 'and ')}</h2>
       </div>
-      <div data-reveal><Faq items={s.faqs} /></div>
+      <div data-reveal="open"><Faq items={s.faqs} /></div>
     </div>
   </section>
 
@@ -180,7 +180,7 @@ const usModels = [
       <ul class="panels">
         {
           others.map((o, i) => (
-            <li data-reveal style={`--i:${i}`}>
+            <li data-reveal="open" style={`--i:${i}`}>
               <a class="panel" href={`/solutions/${o.slug}/`}>
                 <span class="icon-tile">
                   <Icon name={o.icon} />

@@ -41,7 +41,7 @@ const stages = [
       <ul class="cells">
         {
           techCapabilities.map((t, i) => (
-            <li data-reveal style={`--i:${i % 4}`}>
+            <li data-reveal="open" style={`--i:${i % 4}`}>
               <span class="icon-tile"><Icon name={t.icon} /></span>
               <h3>{t.name}</h3>
               <p>{t.text}</p>

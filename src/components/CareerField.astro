@@ -1,0 +1,169 @@
+---
+// Ambient background for dark sections: career and hiring symbols (résumé,
+// briefcase, ID badge, handshake, graduation cap) and small hiring-status cards
+// drifting slowly upward. Purely decorative.
+import Icon from './Icon.astro';
+interface Props {
+  tone?: 'dark' | 'light';
+  density?: number;
+}
+const { tone = 'dark', density = 1 } = Astro.props;
+
+const icons = ['FileUser', 'Briefcase', 'IdCard', 'Handshake', 'GraduationCap', 'UserCheck', 'Award', 'CalendarCheck', 'BadgeCheck', 'ClipboardCheck', 'UserSearch', 'FileText'];
+const statuses = [
+  { role: 'Data Analyst', status: 'Interview scheduled', initials: 'PR' },
+  { role: 'Cloud Engineer', status: 'Offer accepted', initials: 'DM' },
+  { role: 'Clinical Coordinator', status: 'Shortlisted', initials: 'AK' },
+  { role: 'Financial Analyst', status: 'Résumé received', initials: 'JL' },
+  { role: 'Process Engineer', status: 'Placed', initials: 'SN' },
+];
+
+// Deterministic spread so the server render matches on every build.
+const rand = (n: number) => {
+  const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
+  return x - Math.floor(x);
+};
+const count = Math.round(16 * density);
+const items = Array.from({ length: count }, (_, i) => ({
+  icon: icons[i % icons.length],
+  x: (i / count) * 100 + rand(i) * (100 / count) * 0.8,
+  size: 18 + Math.round(rand(i + 7) * 18),
+  dur: 22 + rand(i + 3) * 18,
+  delay: -rand(i + 11) * 40,
+  sway: 10 + rand(i + 5) * 24,
+}));
+const cards = statuses.slice(0, Math.max(2, Math.round(3 * density))).map((c, i) => ({
+  ...c,
+  // Cards stay in the right-hand half, clear of the headline and copy.
+  x: 58 + ((i * 23) % 34),
+  dur: 34 + i * 6,
+  delay: -i * 11 - 4,
+}));
+---
+
+<div class:list={['field', `field--${tone}`]} aria-hidden="true">
+  {
+    items.map((it) => (
+      <span class="field__icon" style={`--x:${it.x.toFixed(1)}%;--d:${it.dur.toFixed(1)}s;--o:${it.delay.toFixed(1)}s;--sway:${it.sway.toFixed(0)}px`}>
+        <Icon name={it.icon} size={it.size} stroke-width={1.4} />
+      </span>
+    ))
+  }
+  {
+    cards.map((c, i) => (
+      <span class:list={['field__card', { 'field__card--extra': i > 1 }]} style={`--x:${c.x}%;--d:${c.dur}s;--o:${c.delay}s;--sway:14px`}>
+        <span class="field__avatar">{c.initials}</span>
+        <span class="field__text">
+          <b>{c.role}</b>
+          <span>
+            <i /> {c.status}
+          </span>
+        </span>
+      </span>
+    ))
+  }
+</div>
+
+<style>
+  .field {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 82%, transparent);
+  }
+  .field__icon,
+  .field__card {
+    position: absolute;
+    left: var(--x);
+    top: 100%;
+    animation:
+      rise var(--d) linear var(--o) infinite,
+      sway calc(var(--d) / 3) ease-in-out var(--o) infinite alternate;
+    will-change: transform;
+  }
+  .field__icon {
+    color: hsl(166 58% 62% / 0.32);
+  }
+  .field--light .field__icon {
+    color: hsl(168 65% 34% / 0.2);
+  }
+  .field__card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px 8px 8px;
+    border-radius: 14px;
+    background: hsl(186 34% 13% / 0.6);
+    box-shadow: inset 0 0 0 1px hsl(166 58% 52% / 0.16);
+    color: hsl(150 22% 95% / 0.72);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0.75;
+  }
+  .field--light .field__card {
+    background: var(--glass);
+    box-shadow: inset 0 0 0 1px var(--line);
+    color: var(--ink-2);
+    opacity: 0.6;
+  }
+  .field__avatar {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: hsl(38 85% 52% / 0.22);
+    color: var(--amber);
+    font-weight: 700;
+    font-size: 0.6875rem;
+  }
+  .field__text b {
+    display: block;
+    font-weight: 600;
+  }
+  .field__text span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .field__text i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal-bright);
+    animation: blink 2.4s ease-in-out infinite;
+  }
+  @keyframes rise {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100cqh - 140px));
+    }
+  }
+  @keyframes sway {
+    from {
+      translate: calc(var(--sway) * -1) 0;
+      rotate: -6deg;
+    }
+    to {
+      translate: var(--sway) 0;
+      rotate: 6deg;
+    }
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0.3;
+    }
+  }
+  .field {
+    container-type: size;
+  }
+  @media (max-width: 999px) {
+    .field__card {
+      display: none;
+    }
+  }
+</style>

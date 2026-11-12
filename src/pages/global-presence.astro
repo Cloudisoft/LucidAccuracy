@@ -51,7 +51,7 @@ const mapLink = (l: (typeof locations)[number]) =>
       <ul class="offices">
         {
           locations.map((l, i) => (
-            <li class="office" data-reveal style={`--i:${i}`}>
+            <li class="office" data-reveal="open" style={`--i:${i}`}>
               <div class="office__map">
                 <iframe
                   src={mapEmbed(l)}

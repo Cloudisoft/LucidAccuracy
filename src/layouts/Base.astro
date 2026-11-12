@@ -25,6 +25,7 @@ const organization = {
   '@type': 'Organization',
   '@id': `${site.url}/#organization`,
   name: site.name,
+  alternateName: ['Lucid Accuracy'],
   url: site.url,
   logo: `${site.url}/icon-512.png`,
   image: `${site.url}/og/home.jpg`,
@@ -65,6 +66,7 @@ const website = {
   '@id': `${site.url}/#website`,
   url: site.url,
   name: site.name,
+  alternateName: ['Lucid Accuracy'],
   description: site.description,
   publisher: { '@id': `${site.url}/#organization` },
   inLanguage: 'en',
@@ -96,10 +98,15 @@ const graphs = [organization, website, ...(breadcrumb ? [breadcrumb] : []), ...s
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex" />}
     <meta name="author" content="LucidAccuracy" />
+    <meta name="application-name" content="LucidAccuracy" />
+    <meta name="apple-mobile-web-app-title" content="LucidAccuracy" />
     <meta name="theme-color" content="#0b1a1c" />
+    <meta name="color-scheme" content="light dark" />
 
-    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-96.png" type="image/png" sizes="96x96" />
+    <link rel="icon" href="/favicon-48.png" type="image/png" sizes="48x48" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" href="/sitemap-index.xml" />
@@ -122,7 +129,21 @@ const graphs = [organization, website, ...(breadcrumb ? [breadcrumb] : []), ...s
     {graphs.map((g) => <script type="application/ld+json" is:inline set:html={JSON.stringify(g)} />)}
 
     <script is:inline>
-      document.documentElement.classList.add('js');
+      (() => {
+        const apply = () => {
+          let theme = null;
+          try {
+            theme = localStorage.getItem('theme');
+          } catch (e) {}
+          if (theme !== 'dark' && theme !== 'light') {
+            theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.dataset.theme = theme;
+          document.documentElement.classList.add('js');
+        };
+        apply();
+        document.addEventListener('astro:after-swap', apply);
+      })();
     </script>
     <ClientRouter />
   </head>

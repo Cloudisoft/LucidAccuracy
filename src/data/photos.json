@@ -1,0 +1,92 @@
+{
+  "technology-it": {
+    "src": "/images/industries/technology-it.webp",
+    "placeholder": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAABwAwCdASoYABAAPu1iqU2ppaOiMAgBMB2JaQAAQtVDSjzPpiAA31YcqOMhbZrIvoJFpflaD4ToAzzLWU6UjsWVqiYxzbLuWyERryd492OhkoiDDL5pSeHuanB6FZZke1CAAA==",
+    "by": "PiDatacenters",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Racks_Amravati_Data_Center.jpg",
+    "title": "Racks Amravati Data Center"
+  },
+  "healthcare": {
+    "src": "/images/industries/healthcare.webp",
+    "placeholder": "data:image/webp;base64,UklGRrIAAABXRUJQVlA4IKYAAAAwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JQBfM+AhwBAOpH7jELosP+QAA9dt3aEozvRPR88wLz3LjnM8IRBQ5FzffDJbmGl819euTuL7D9mPX++KWyak9IicEp9fMrV8biR/wongufmmsdaTDUu+aoPqP17cVdost84JiUG2jEBUQ2AMH8ofBAo4qHTBqkX246n1Z/0ZgeQ+QdUxH1//3ONbPTsAA",
+    "by": "Chief Petty Officer Michael Ard",
+    "licence": "Public domain",
+    "licenceUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "page": "https://commons.wikimedia.org/wiki/File:RSC-North,_others_provide_operating_room_support_to_ANA_medical_personnel_in_leg_surgery_DVIDS456309.jpg",
+    "title": "RSC-North, others provide operating room support to ANA medical personnel in leg surgery DVIDS456309"
+  },
+  "finance": {
+    "src": "/images/industries/finance.webp",
+    "placeholder": "data:image/webp;base64,UklGRtQAAABXRUJQVlA4IMgAAADQBACdASoYABAAPu1iqU2ppaOiMAgBMB2JQBaga/ibA95JlBVMvWuwRd+uXhxwZgD+zOM0ykVC8hjhaZc3S+aqD28vBFXfXthc1a/pLviEa/qKe5uAFgO+8qeWz1H2h7wecjK+9uX2Zvyn3+ZFRzZ1f5Qrhh6rMqkSVu592QELjeHwK7lYaOvhpeb80oB6/sTyQEr47Z4L4Oes9u163xn9MBpCXVLDIuLbG/NX+sdX/Q+4guM0jE6Iw5BrE8sXyR+uBrzQHgAAAA==",
+    "by": "The Central Intelligence Agency",
+    "licence": "Public domain",
+    "licenceUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "page": "https://commons.wikimedia.org/wiki/File:Director_Petraeus_rings_opening_bell_at_NY_Stock_Exchange_-_Flickr_-_The_Central_Intelligence_Agency.jpg",
+    "title": "Director Petraeus rings opening bell at NY Stock Exchange - Flickr - The Central Intelligence Agency"
+  },
+  "life-sciences": {
+    "src": "/images/industries/life-sciences.webp",
+    "placeholder": "data:image/webp;base64,UklGRrIAAABXRUJQVlA4IKYAAABQBACdASoYABAAPu1iqU2ppaOiMAgBMB2JZgCdL46BrCWM78wv4UbLJzzAAP4ylINPxwz/MaZI7PM/hbwEccRhflujNps5FnLMe4bOx99YfWj+2DZQg/Cw8NC2OY8dZz2jrP3Dz6u6Ep8zsv/nQBvW6h4flsXhRNKxAW2/3oqJksm7XWHfb4ZA4PYxtoa0kUt5EbPFhm5Uk9HvuoZQCziagZnaGAAA",
+    "by": "Linda Bartlett (Photographer)",
+    "licence": "Public domain",
+    "licenceUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "page": "https://commons.wikimedia.org/wiki/File:Monoclonal_antibodies_(8).jpg",
+    "title": "Monoclonal antibodies (8)"
+  },
+  "logistics": {
+    "src": "/images/industries/logistics.webp",
+    "placeholder": "data:image/webp;base64,UklGRqQAAABXRUJQVlA4IJgAAADQAwCdASoYABAAPu1iqU2ppaOiMAgBMB2JQBfJBCU5NS+XJqzbtAAA/uqNs6+ug6PfDd9VgXmH5c+KNf8r4F4FYOEBpZhdAPomxemBVG85E/7s6sMBjruwLMYAMbrPhq7Nem1v7X7AwkyEf8jjzCGMWNhHVpui7erAW1xKnOftkUidgCp5fbrIPn3lridRVWe/+85M/kAAAA==",
+    "by": "Guilhem Vellut from Annecy, France",
+    "licence": "CC BY 2.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Container_crane_@_Container_terminal_@_Harbour_Tour_@_Spido_@_Rotterdam_(30478861881).jpg",
+    "title": "Container crane @ Container terminal @ Harbour Tour @ Spido @ Rotterdam (30478861881)"
+  },
+  "telecom": {
+    "src": "/images/industries/telecom.webp",
+    "placeholder": "data:image/webp;base64,UklGRkIAAABXRUJQVlA4IDYAAADwAgCdASoYABAAPu1kqU2ppaOiMAgBMB2JZwAAWF/oAAD8TMYrF/FsALSRtUF7Snc9J3iXgAA=",
+    "by": "Microrao",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Communication_tower_wireless.jpg",
+    "title": "Communication tower wireless"
+  },
+  "retail": {
+    "src": "/images/industries/retail.webp",
+    "placeholder": "data:image/webp;base64,UklGRqwAAABXRUJQVlA4IKAAAABQBACdASoYABAAPu1iqU2ppaOiMAgBMB2JYgCdIMmJ/i2MWBmGI7TYH3twAP4/6qxBMI5jfqodmSFurki4fXUaDE6fcMJk/PjgpbR8xLRx5x2B8Zjh2HJxAdPm/T2B3mhGQ74MxeyXn6WYMATDY2WCiEHKz9NhW0DmWh6XCAQWJBEX9FGUw6KyNnsB5hZ5syYgnOYfWOiSD+1xV9eWCAAA",
+    "by": "Wilfredor",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Aisle_in_L_Intermarche_supermarket_in_Quebec_City.jpg",
+    "title": "Aisle in L Intermarche supermarket in Quebec City"
+  },
+  "energy": {
+    "src": "/images/industries/energy.webp",
+    "placeholder": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAADQAwCdASoYABAAPu1iqk2ppaQiMAgBMB2JZQCsACHZeF4+PUwwIgAA/otWD70zSeQH552FXMNU5kd7SA/vXFZiuFeIZYBmZMKuRx45RgMnITfcD41Czn+4AAA=",
+    "by": "TrickyH",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Solar_Plant_in_Jericho.jpg",
+    "title": "Solar Plant in Jericho"
+  },
+  "manufacturing": {
+    "src": "/images/industries/manufacturing.webp",
+    "placeholder": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAAAwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JZwDCgBJq2UhLYlCTrLyqwYAA/pqTYculYdHcERXRGoUSgZ4wONn8k/DCM9vLxVGZADbvw5sKpegQ68dcEcB5oIF1N9oI8siVj2SXonPlVszaLA9tEh8CO6uXaCQSW1FRJ4rtn0Q83GqVNKDJak0R2ZrHeG1/j1wlIYsEQAA=",
+    "by": "Shixart1985",
+    "licence": "CC BY 2.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Machine_working_in_a_factory_while_cutting_material_on_a_production_line_in_the_workshop.jpg",
+    "title": "Machine working in a factory while cutting material on a production line in the workshop"
+  },
+  "engineering": {
+    "src": "/images/industries/engineering.webp",
+    "placeholder": "data:image/webp;base64,UklGRrgAAABXRUJQVlA4IKwAAACwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JQBWCP/xbJRxx3XSUfeCcPLw6XvIAAP6Dvh1o4xgxhh6vJhzo/WfBdC+QqaDgHCTBChys2kLgZ/Cu5L/y5CqMeMu1vYKoSTiXgw1p8QU5iyDCOP7xV0Ub0idKfNJQzbd+u9ZS9wpyDVRNQP7WVtDlDiUwx2M5K3kA8z+LeXUJnVD2KogpvOUnAyeOndpgT5nvCwAA",
+    "by": "Shixart1985",
+    "licence": "CC BY 2.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Worker_uses_machinery_to_assemble_parts_in_a_factory_setting.jpg",
+    "title": "Worker uses machinery to assemble parts in a factory setting"
+  }
+}
