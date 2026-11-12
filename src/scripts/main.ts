@@ -2,8 +2,9 @@
 // client-side page transitions, and is torn down through one AbortController.
 
 import Lenis from 'lenis';
+import { initNetworks, initCounters, initProgress } from './effects';
 
-const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 
 let teardown: AbortController | null = null;
 
@@ -11,7 +12,6 @@ let teardown: AbortController | null = null;
 // devices keep the browser's native momentum scrolling, which is already smooth
 // and stays in sync with the address bar and pull-to-refresh.
 function initSmoothScroll(signal: AbortSignal) {
-  if (reduceMotion()) return;
   const lenis = new Lenis({
     duration: 1.05,
     easing: (t) => 1 - Math.pow(1 - t, 4),
@@ -85,7 +85,7 @@ function initHeader(signal: AbortSignal) {
 function initReveal(signal: AbortSignal) {
   const items = document.querySelectorAll<HTMLElement>('[data-reveal]');
   if (!items.length) return;
-  if (reduceMotion() || !('IntersectionObserver' in window)) {
+  if (!('IntersectionObserver' in window)) {
     items.forEach((el) => el.classList.add('is-in'));
     return;
   }
@@ -335,7 +335,7 @@ async function initGlobe(signal: AbortSignal) {
     requestAnimationFrame(frame);
   };
   const start = () => {
-    if (running || reduceMotion()) return;
+    if (running) return;
     running = true;
     prev = performance.now();
     requestAnimationFrame(frame);
@@ -542,11 +542,6 @@ function initCallDemo(signal: AbortSignal) {
 
     const play = () => {
       if (finished) reset();
-      if (reduceMotion() && !sound) {
-        scenario.lines.slice(shown).forEach((l) => addLine(l, false));
-        index = shown = scenario.lines.length;
-        return finish();
-      }
       playing = true;
       clearInterval(tick);
       tick = window.setInterval(() => (timer.textContent = fmt(++seconds)), 1000);
@@ -662,6 +657,9 @@ function init() {
   initCallDemo(signal);
   initContactForm(signal);
   initGlobe(signal);
+  initNetworks(signal);
+  initCounters(signal);
+  initProgress(signal);
 }
 
 document.addEventListener('astro:after-swap', () => document.documentElement.classList.add('js'));

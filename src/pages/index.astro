@@ -25,6 +25,13 @@ const hub = techCapabilities.map((t, i) => {
   const a = (i / techCapabilities.length) * Math.PI * 2 - Math.PI / 2;
   return { ...t, x: 50 + Math.cos(a) * 39, y: 50 + Math.sin(a) * 39 };
 });
+const orbit = [
+  { label: 'Recruitment', icon: 'Users', x: 2, y: 48 },
+  { label: 'AI Calling Agent', icon: 'AudioLines', x: 48, y: 8 },
+  { label: 'Cloud & Data', icon: 'Cloud', x: 12, y: 76 },
+  { label: 'Training', icon: 'GraduationCap', x: 54, y: 72 },
+  { label: 'Business Process', icon: 'Workflow', x: 40, y: 90 },
+];
 const shortlist = [
   ['Cloud Engineer', 'Toronto', 'Shortlisted'],
   ['Clinical Coordinator', 'Manchester', 'Interview'],
@@ -35,7 +42,8 @@ const shortlist = [
 
 <Base title="LucidAccuracy | Global Workforce, Technology & Business Solutions" description={site.description} og="home">
   <!-- 1. Hero -->
-  <section class="hero on-night">
+  <section class="hero on-night has-net">
+    <canvas class="net" data-net aria-hidden="true"></canvas>
     <div class="wrap hero__in">
       <div class="hero__copy">
         <p class="hero__line fade-up">Global Workforce <i>•</i> Technology <i>•</i> AI <i>•</i> Business Solutions</p>
@@ -55,6 +63,14 @@ const shortlist = [
       </div>
       <div class="hero__globe">
         <Globe />
+        <ul class="orbit" aria-hidden="true">
+          {orbit.map((o, i) => (
+            <li class="orbit__chip" style={`--x:${o.x}%;--y:${o.y}%;--i:${i}`}>
+              <span class="orbit__icon"><Icon name={o.icon} size={16} /></span>
+              {o.label}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
     <div class="marquee" aria-hidden="true">
@@ -77,10 +93,10 @@ const shortlist = [
           conversations. One team covers all three, with training, consulting and business process support alongside.
         </p>
         <dl class="facts">
-          <div><dt>{markets.length}</dt><dd>markets served</dd></div>
-          <div><dt>{solutions.length + 1}</dt><dd>solution lines</dd></div>
-          <div><dt>{industries.length}</dt><dd>industries</dd></div>
-          <div><dt>{locations.length}</dt><dd>U.S. offices</dd></div>
+          <div><dt data-count={markets.length}>{markets.length}</dt><dd>markets served</dd></div>
+          <div><dt data-count={solutions.length + 1}>{solutions.length + 1}</dt><dd>solution lines</dd></div>
+          <div><dt data-count={industries.length}>{industries.length}</dt><dd>industries</dd></div>
+          <div><dt data-count={locations.length}>{locations.length}</dt><dd>U.S. offices</dd></div>
         </dl>
         <a href="/about/" class="arrow-link">Read about the company <Icon name="ArrowRight" /></a>
       </div>
@@ -186,7 +202,8 @@ const shortlist = [
   </section>
 
   <!-- 4. AI Calling Agent -->
-  <section class="section section--night agent">
+  <section class="section section--night agent has-net">
+    <canvas class="net" data-net aria-hidden="true"></canvas>
     <div class="agent__glow" aria-hidden="true"></div>
     <div class="wrap agent__in">
       <div class="agent__copy">
@@ -255,7 +272,8 @@ const shortlist = [
   </section>
 
   <!-- 6. Technology & AI capabilities -->
-  <section class="section section--sand tech">
+  <section class="section section--sand tech has-net">
+    <canvas class="net" data-net="light" aria-hidden="true"></canvas>
     <div class="wrap tech__in">
       <div>
         <div class="head">
@@ -427,6 +445,68 @@ const shortlist = [
     width: min(118vw, 560px);
     margin-inline: calc(50% - min(59vw, 280px));
     margin-bottom: max(-34vw, -180px);
+  }
+  .hero__globe {
+    position: relative;
+  }
+  .orbit__chip {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px 8px 8px;
+    border-radius: 999px;
+    background: hsl(188 42% 10% / 0.72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow:
+      inset 0 0 0 1px hsl(166 58% 52% / 0.28),
+      0 18px 36px -18px hsl(188 60% 3% / 0.9);
+    color: var(--on-night);
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
+    animation:
+      chip-in 0.9s var(--ease) both,
+      float 6s ease-in-out infinite alternate;
+    animation-delay:
+      calc(0.9s + var(--i) * 0.15s),
+      calc(var(--i) * -1.3s);
+  }
+  .orbit__icon {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: hsl(166 58% 52% / 0.16);
+    color: var(--teal-bright);
+  }
+  .orbit__chip:nth-child(2) .orbit__icon {
+    background: hsl(38 85% 52% / 0.18);
+    color: var(--amber);
+  }
+  @keyframes chip-in {
+    from {
+      opacity: 0;
+      scale: 0.8;
+    }
+  }
+  @keyframes float {
+    from {
+      translate: 0 -8px;
+    }
+    to {
+      translate: 0 8px;
+    }
+  }
+  @media (max-width: 999px) {
+    .orbit {
+      display: none;
+    }
   }
   .marquee {
     position: relative;
@@ -1001,8 +1081,19 @@ const shortlist = [
     stroke-width: 0.25;
     stroke-dasharray: 0.6 1.6;
   }
+  .hub__ring {
+    transform-origin: 50px 50px;
+    animation: spin 60s linear infinite;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
   .hub__ring--in {
-    stroke-dasharray: none;
+    animation-direction: reverse;
+    animation-duration: 40s;
+    stroke-dasharray: 2 1.2;
     stroke: hsl(168 30% 60% / 0.35);
   }
   .hub__line {

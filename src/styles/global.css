@@ -699,26 +699,54 @@ button {
   }
 }
 
+/* Motion stays on when the OS asks for reduced motion: the brief makes it part of
+   the brand, and that setting is often switched on without the visitor knowing.
+   Only the long entrance travel is shortened. */
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-delay: 0s !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    transition-delay: 0s !important;
-  }
-
   .js [data-reveal] {
-    opacity: 1;
-    transform: none;
-    filter: none;
+    transform: translateY(8px);
   }
+}
+
+/* ---------- Connecting-dots network ---------- */
+
+.net {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.6s var(--ease);
+}
+
+.net.is-ready {
+  opacity: 1;
+}
+
+.has-net {
+  position: relative;
+  isolation: isolate;
+}
+
+.has-net > .wrap,
+.has-net > .marquee {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Scroll progress ---------- */
+
+.progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 150;
+  height: 3px;
+  background: linear-gradient(90deg, var(--teal-bright), var(--amber));
+  transform: scaleX(var(--p, 0));
+  transform-origin: left;
+  pointer-events: none;
 }
 
 /* ---------- Inner-page patterns ---------- */
