@@ -7,6 +7,8 @@ import Faq from '../components/Faq.astro';
 import Cta from '../components/Cta.astro';
 import { agent, site } from '../data/site';
 import { faqSchema } from '../data/schema';
+import VideoPlayer from '../components/VideoPlayer.astro';
+import { videos, videoSchema } from '../data/videos';
 
 const crumbs = [
   { name: 'Products', href: '/products/' },
@@ -42,7 +44,7 @@ const recent = [
 ];
 ---
 
-<Base {title} {description} og="ai-calling-agent" {crumbs} schema={[product, faqSchema(agent.faqs)]}>
+<Base {title} {description} og="ai-calling-agent" {crumbs} schema={[product, faqSchema(agent.faqs), videoSchema(videos.find((v) => v.id === 'ai')!, site.url)]}>
   <!-- Hero -->
   <section class="ahero on-night has-net">
     <CareerField />
@@ -88,6 +90,17 @@ const recent = [
           ))
         }
       </ul>
+    </div>
+  </section>
+
+  <!-- Film -->
+  <section class="section section--sand section--tight">
+    <div class="wrap film">
+      <div>
+        <h2 data-reveal="mask">See the agent in 30 seconds</h2>
+        <p class="lead" data-reveal style="--i:1">From the first ring to a booked appointment and an updated CRM record.</p>
+      </div>
+      <div data-reveal="scale"><VideoPlayer id="ai" title="LucidAI Calling Agent" /></div>
     </div>
   </section>
 
@@ -298,6 +311,19 @@ const recent = [
     max-width: 50ch;
     font-size: 1.125rem;
     color: var(--on-night-2);
+  }
+  .film {
+    display: grid;
+    gap: 32px 64px;
+    align-items: center;
+  }
+  .film .lead {
+    margin-top: 16px;
+  }
+  @media (min-width: 1000px) {
+    .film {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    }
   }
   .uses {
     display: grid;

@@ -87,3 +87,87 @@ export function initLiveLoops(signal: AbortSignal) {
   els.forEach((el) => io.observe(el));
   signal.addEventListener('abort', () => io.disconnect());
 }
+
+// Video players: muted autoplay while on screen, sound toggle, playlist switching.
+export function initVideos(signal: AbortSignal) {
+  document.querySelectorAll<HTMLElement>('[data-video]').forEach((root) => {
+    const video = root.querySelector('video')!;
+    const play = root.querySelector<HTMLButtonElement>('[data-video-play]')!;
+    const sound = root.querySelector<HTMLButtonElement>('[data-video-sound]')!;
+    const soundLabel = root.querySelector<HTMLElement>('[data-video-sound-label]')!;
+    const bar = root.querySelector<HTMLElement>('[data-video-progress]')!;
+    let userPaused = false;
+    let visible = false;
+
+    const sync = () => {
+      root.classList.toggle('is-paused', video.paused);
+      play.setAttribute('aria-label', video.paused ? 'Play video' : 'Pause video');
+      sound.setAttribute('aria-pressed', String(!video.muted));
+      soundLabel.textContent = video.muted ? 'Sound on' : 'Sound off';
+    };
+    const tryPlay = () => video.play().catch(() => sync());
+    ['play', 'pause', 'volumechange'].forEach((e) => video.addEventListener(e, sync, { signal }));
+    video.addEventListener('timeupdate', () => (bar.style.transform = `scaleX(${video.duration ? video.currentTime / video.duration : 0})`), { signal });
+    play.addEventListener(
+      'click',
+      () => {
+        if (video.paused) {
+          userPaused = false;
+          tryPlay();
+        } else {
+          userPaused = true;
+          video.pause();
+        }
+      },
+      { signal },
+    );
+    sound.addEventListener(
+      'click',
+      () => {
+        video.muted = !video.muted;
+        if (video.paused) {
+          userPaused = false;
+          tryPlay();
+        }
+      },
+      { signal },
+    );
+    video.addEventListener('click', () => play.click(), { signal });
+
+    root.querySelectorAll<HTMLButtonElement>('[data-video-src]').forEach((item) =>
+      item.addEventListener(
+        'click',
+        () => {
+          const id = item.dataset.videoSrc!;
+          root.querySelectorAll('[data-video-src]').forEach((b) => {
+            b.classList.toggle('is-active', b === item);
+            b.setAttribute('aria-pressed', String(b === item));
+          });
+          const muted = video.muted;
+          video.poster = `/video/${id}.jpg`;
+          video.src = `/video/${id}.mp4`;
+          video.setAttribute('aria-label', `${item.dataset.videoTitle} video`);
+          video.muted = muted;
+          userPaused = false;
+          tryPlay();
+        },
+        { signal },
+      ),
+    );
+
+    const io = new IntersectionObserver(
+      ([e]) => {
+        visible = e.isIntersecting;
+        if (visible && !userPaused) tryPlay();
+        if (!visible && !video.paused) video.pause();
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(video);
+    signal.addEventListener('abort', () => {
+      io.disconnect();
+      video.pause();
+    });
+    sync();
+  });
+}

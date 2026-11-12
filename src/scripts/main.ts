@@ -2,7 +2,7 @@
 // client-side page transitions, and is torn down through one AbortController.
 
 import Lenis from 'lenis';
-import { initCounters, initProgress, initButtons, initLiveLoops } from './effects';
+import { initCounters, initProgress, initButtons, initLiveLoops, initVideos } from './effects';
 
 let teardown: AbortController | null = null;
 
@@ -830,6 +830,7 @@ function init() {
   initCounters(signal);
   initButtons(signal);
   initLiveLoops(signal);
+  initVideos(signal);
   initProgress(signal);
 }
 

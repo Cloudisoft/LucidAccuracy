@@ -88,5 +88,14 @@
     "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
     "page": "https://commons.wikimedia.org/wiki/File:Worker_uses_machinery_to_assemble_parts_in_a_factory_setting.jpg",
     "title": "Worker uses machinery to assemble parts in a factory setting"
+  },
+  "professional-services": {
+    "src": "/images/industries/professional-services.webp",
+    "placeholder": "data:image/webp;base64,UklGRqQAAABXRUJQVlA4IJgAAADwAwCdASoYABAAPu1iqU2ppaOiMAgBMB2JQBOgMYiar9lcLn5gpRQAAP5g6g48z7n5Mit/u2/oFEuk/qhHBdAf3flbvT8I02jkNex4bWx7EoV3KJ5CHU+ilO5ey6ucUp+cY/H4nc/WezgrYnp+UXml28RJZUj4unFj+StQg/zqgcqAQEGOJ2RzUEFAoTA2GSRSoO2nFegAAA==",
+    "by": "WAO Coworking",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Openspace_wao_coworking.jpg",
+    "title": "Openspace wao coworking"
   }
 }

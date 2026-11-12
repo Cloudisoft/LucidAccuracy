@@ -1,0 +1,199 @@
+---
+// A muted-autoplay video with a sound toggle. Plays while on screen, pauses
+// when scrolled away. Several videos can share one player via data-video-src.
+import Icon from './Icon.astro';
+interface Props {
+  id: string;
+  title: string;
+  playlist?: { id: string; title: string; group: string }[];
+}
+const { id, title, playlist } = Astro.props;
+---
+
+<div class="vp" data-video>
+  <div class="vp__frame">
+    <video
+      src={`/video/${id}.mp4`}
+      poster={`/video/${id}.jpg`}
+      preload="none"
+      muted
+      playsinline
+      loop
+      width="1280"
+      height="720"
+      aria-label={`${title} video`}
+    ></video>
+    <div class="vp__controls">
+      <button class="vp__btn" data-video-play aria-label="Pause video">
+        <span class="vp__i vp__i--pause"><Icon name="Pause" size={18} /></span>
+        <span class="vp__i vp__i--play"><Icon name="Play" size={18} /></span>
+      </button>
+      <button class="vp__btn vp__btn--sound" data-video-sound aria-pressed="false">
+        <span class="vp__i vp__i--off"><Icon name="VolumeX" size={18} /></span>
+        <span class="vp__i vp__i--on"><Icon name="Volume2" size={18} /></span>
+        <span data-video-sound-label>Sound on</span>
+      </button>
+      <span class="vp__time"><i data-video-progress></i></span>
+    </div>
+  </div>
+  {
+    playlist && (
+      <ol class="vp__list">
+        {playlist.map((v, i) => (
+          <li>
+            <button class:list={['vp__item', { 'is-active': v.id === id }]} data-video-src={v.id} data-video-title={v.title} aria-pressed={v.id === id ? 'true' : 'false'}>
+              <img src={`/video/${v.id}.jpg`} alt="" width="160" height="90" loading="lazy" />
+              <span>
+                <em>{v.group} · 0:30</em>
+                <strong>{v.title}</strong>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ol>
+    )
+  }
+</div>
+
+<style>
+  .vp {
+    display: grid;
+    gap: 16px;
+  }
+  .vp__frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: var(--night);
+    box-shadow:
+      0 0 0 1px var(--night-line),
+      var(--shadow-2);
+  }
+  video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .vp__controls {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity 0.3s,
+      transform 0.4s var(--ease);
+  }
+  .vp__frame:hover .vp__controls,
+  .vp__frame:focus-within .vp__controls,
+  .vp.is-paused .vp__controls {
+    opacity: 1;
+    transform: none;
+  }
+  @media (hover: none) {
+    .vp__controls {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .vp__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 44px;
+    height: 44px;
+    padding: 0 13px;
+    justify-content: center;
+    border-radius: 999px;
+    background: hsl(188 42% 7% / 0.78);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: background-color 0.2s, transform 0.3s var(--ease);
+  }
+  .vp__btn:hover {
+    background: hsl(188 42% 7% / 0.95);
+  }
+  .vp__btn:active {
+    transform: scale(0.95);
+  }
+  .vp__i {
+    display: none;
+  }
+  .vp:not(.is-paused) .vp__i--pause,
+  .vp.is-paused .vp__i--play,
+  .vp__btn--sound[aria-pressed='false'] .vp__i--off,
+  .vp__btn--sound[aria-pressed='true'] .vp__i--on {
+    display: grid;
+  }
+  @media (max-width: 600px) {
+    .vp__btn--sound [data-video-sound-label] {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+  }
+  .vp__time {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: hsl(0 0% 100% / 0.25);
+    overflow: hidden;
+  }
+  .vp__time i {
+    display: block;
+    height: 100%;
+    background: var(--amber);
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+  .vp__list {
+    display: grid;
+    gap: 8px;
+  }
+  .vp__item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 8px;
+    border-radius: 14px;
+    text-align: left;
+    transition: background-color 0.25s, transform 0.4s var(--ease);
+  }
+  .vp__item:hover {
+    background: hsl(176 22% 100% / 0.06);
+    transform: translateX(3px);
+  }
+  .vp__item.is-active {
+    background: hsl(166 58% 52% / 0.12);
+    box-shadow: inset 0 0 0 1px hsl(166 58% 52% / 0.4);
+  }
+  .vp__item img {
+    flex: none;
+    width: 112px;
+    height: 63px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+  .vp__item em {
+    display: block;
+    font-style: normal;
+    font-size: 0.8125rem;
+    color: var(--on-night-2);
+  }
+  .vp__item strong {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.0625rem;
+    letter-spacing: -0.01em;
+  }
+</style>

@@ -7,6 +7,8 @@ import WorldMap from '../components/WorldMap.astro';
 import CallDemo from '../components/CallDemo.astro';
 import Cta from '../components/Cta.astro';
 import photos from '../data/photos.json';
+import VideoPlayer from '../components/VideoPlayer.astro';
+import { videos, videoSchema } from '../data/videos';
 import { site, pillars, solutions, industries, techCapabilities, whyUs, projects, agent, locations, markets } from '../data/site';
 
 const support = solutions.filter((s) => ['training', 'consulting', 'business-process'].includes(s.slug));
@@ -42,7 +44,7 @@ const shortlist = [
 ];
 ---
 
-<Base title="LucidAccuracy | Global Workforce, Technology & Business Solutions" description={site.description} og="home">
+<Base title="LucidAccuracy | Global Workforce, Technology & Business Solutions" description={site.description} og="home" schema={videos.map((v) => videoSchema(v, site.url))}>
   <!-- 1. Hero -->
   <section class="hero on-night has-net">
     <CareerField />
@@ -101,6 +103,19 @@ const shortlist = [
           <div><dt data-count={locations.length}>{locations.length}</dt><dd>U.S. offices</dd></div>
         </dl>
         <a href="/about/" class="arrow-link">Read about the company <Icon name="ArrowRight" /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2b. Explainer videos -->
+  <section class="section section--night films" id="videos">
+    <div class="wrap">
+      <div class="head head--split">
+        <h2 data-reveal="mask">LucidAccuracy in 30 seconds</h2>
+        <p data-reveal style="--i:1">Short films on what we do, and two hiring trends we help clients act on.</p>
+      </div>
+      <div class="films__player" data-reveal="scale">
+        <VideoPlayer id={videos[0].id} title={videos[0].title} playlist={videos.map(({ id, title, group }) => ({ id, title, group }))} />
       </div>
     </div>
   </section>
@@ -617,6 +632,14 @@ const shortlist = [
   @media (min-width: 960px) {
     .intro__in {
       grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+
+  /* ---------- Films ---------- */
+  @media (min-width: 1000px) {
+    .films__player :global(.vp) {
+      grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
       align-items: start;
     }
   }
