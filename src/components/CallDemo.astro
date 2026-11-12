@@ -7,11 +7,15 @@ interface Props {
 }
 const { tabs = false } = Astro.props;
 // Recorded voice clips live in public/audio/calls as <scenario>-<line>.mp3.
-// A missing clip falls back to the browser's speech voice.
-const scenarios = (tabs ? callScenarios : callScenarios.slice(0, 1)).map((s) => ({
+// A call is only offered once every one of its lines has a clip, so a call
+// never switches voice halfway. Add the missing clips and it appears.
+const withAudio = callScenarios.map((s) => ({
   ...s,
   audio: s.lines.map((_, i) => (existsSync(`public/audio/calls/${s.key}-${i}.mp3`) ? `/audio/calls/${s.key}-${i}.mp3` : null)),
 }));
+const voiced = withAudio.filter((s) => s.audio.every(Boolean));
+const ready = voiced.length ? voiced : withAudio;
+const scenarios = tabs ? ready : ready.slice(0, 1);
 const bars = Array.from({ length: 34 }, (_, i) => ({
   d: (0.7 + ((i * 37) % 11) / 14).toFixed(2),
   o: (((i * 53) % 17) / -10).toFixed(2),
