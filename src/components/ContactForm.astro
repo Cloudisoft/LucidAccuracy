@@ -1,0 +1,354 @@
+---
+// Enquiry form. Posts JSON to /api/contact (server/index.mjs) and confirms on
+// screen. A ?topic= query (from "Book a Demo" and similar links) pre-ticks the
+// matching service.
+import Icon from './Icon.astro';
+import services from '../data/contact-services.json';
+import { markets, site } from '../data/site';
+interface Props {
+  compact?: boolean;
+  heading?: string;
+}
+const { compact = false, heading = 'Send us your request' } = Astro.props;
+const uid = compact ? 'cf-home' : 'cf';
+---
+
+<div class:list={['cf', { 'cf--compact': compact }]} data-cf>
+  <form class="cf__form" data-cf-form novalidate>
+    <h2 class="cf__title">{heading}</h2>
+    <p class="cf__note">Fields marked * are required. We reply within 24–48 hours.</p>
+
+    <fieldset class="cf__services" aria-describedby={`${uid}-services-err`}>
+      <legend>What are you looking for? *</legend>
+      <div class="cf__chips">
+        {
+          services.map((s) => (
+            <label class="cf__chip">
+              <input type="checkbox" name="services" value={s.value} data-topics={s.topics.join('|')} />
+              <span>
+                <Icon name={s.icon} size={17} />
+                {s.value}
+              </span>
+            </label>
+          ))
+        }
+      </div>
+      <p class="cf__err" id={`${uid}-services-err`} data-err="services" aria-live="polite"></p>
+    </fieldset>
+
+    <div class="cf__grid">
+      <label class="cf__field">
+        <span>Name *</span>
+        <input type="text" name="name" autocomplete="name" required aria-describedby={`${uid}-name-err`} />
+        <em class="cf__err" id={`${uid}-name-err`} data-err="name" aria-live="polite"></em>
+      </label>
+      <label class="cf__field">
+        <span>Work email *</span>
+        <input type="email" name="email" autocomplete="email" required aria-describedby={`${uid}-email-err`} />
+        <em class="cf__err" id={`${uid}-email-err`} data-err="email" aria-live="polite"></em>
+      </label>
+      {
+        !compact && (
+          <label class="cf__field">
+            <span>Phone</span>
+            <input type="tel" name="phone" autocomplete="tel" aria-describedby={`${uid}-phone-err`} />
+            <em class="cf__err" id={`${uid}-phone-err`} data-err="phone" aria-live="polite" />
+          </label>
+        )
+      }
+      <label class="cf__field">
+        <span>Company</span>
+        <input type="text" name="company" autocomplete="organization" />
+      </label>
+      {
+        !compact && (
+          <label class="cf__field">
+            <span>Country</span>
+            <select name="country">
+              {markets
+                .filter((m) => m.code !== 'eu')
+                .map((m) => (
+                  <option>{m.name}</option>
+                ))}
+              <option>Europe (other)</option>
+              <option>Other</option>
+            </select>
+          </label>
+        )
+      }
+      <label class="cf__field cf__field--wide">
+        <span>How can we help? *</span>
+        <textarea name="message" rows={compact ? 4 : 6} required aria-describedby={`${uid}-message-err`}></textarea>
+        <em class="cf__err" id={`${uid}-message-err`} data-err="message" aria-live="polite"></em>
+      </label>
+    </div>
+
+    <label class="cf__hp" aria-hidden="true">Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+
+    <label class="cf__consent">
+      <input type="checkbox" name="consent" required aria-describedby={`${uid}-consent-err`} />
+      <span>I agree that LucidAccuracy may use these details to reply to my request, as described in the <a class="link" href="/privacy/">privacy policy</a>.</span>
+    </label>
+    <p class="cf__err" id={`${uid}-consent-err`} data-err="consent" aria-live="polite"></p>
+
+    <div class="cf__actions">
+      <button class="btn btn--amber cf__submit" type="submit" data-cf-submit>
+        <span class="cf__label">Submit Request</span>
+        <span class="cf__spin" aria-hidden="true"><Icon name="LoaderCircle" size={18} /></span>
+        <Icon name="ArrowRight" />
+      </button>
+      <p class="cf__fail" data-cf-fail role="alert" hidden></p>
+    </div>
+  </form>
+
+  <div class="cf__done" data-cf-done tabindex="-1" hidden>
+    <span class="cf__tick"><Icon name="CircleCheckBig" size={34} /></span>
+    <h2>Your request has been submitted</h2>
+    <p>Thank you<span data-cf-name></span>. Someone from our team will contact you within 24–48 hours.</p>
+    <p class="cf__ref">Reference: <span data-cf-ref></span></p>
+    <p class="cf__alt">Need us sooner? Call <a class="link" href={site.phoneHref}>{site.phone}</a> or email <a class="link" href={`mailto:${site.email}`}>{site.email}</a>.</p>
+    <button class="btn btn--ghost" type="button" data-cf-again>Send another request</button>
+  </div>
+</div>
+
+<style>
+  .cf {
+    position: relative;
+  }
+  .cf__title {
+    font-size: 1.75rem;
+  }
+  .cf__note {
+    margin: 8px 0 26px;
+    color: var(--ink-2);
+    font-size: 0.9375rem;
+  }
+  fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0 0 22px;
+    min-width: 0;
+  }
+  legend {
+    padding: 0;
+    margin-bottom: 12px;
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+  .cf__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .cf__chip input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .cf__chip span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    background: var(--paper);
+    box-shadow: inset 0 0 0 1px var(--field-border);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background-color 0.25s,
+      color 0.25s,
+      box-shadow 0.25s,
+      transform 0.35s var(--ease);
+  }
+  .cf__chip span :global(svg) {
+    color: var(--teal-deep);
+    transition: color 0.25s;
+  }
+  .cf__chip:hover span {
+    transform: translateY(-1px);
+    box-shadow: inset 0 0 0 1px var(--teal);
+  }
+  .cf__chip input:checked + span {
+    background: var(--teal-deep);
+    color: var(--btn-primary-fg);
+    box-shadow: inset 0 0 0 1px var(--teal-deep);
+  }
+  .cf__chip input:checked + span :global(svg) {
+    color: currentColor;
+  }
+  .cf__chip input:focus-visible + span {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+  }
+  .cf__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .cf__field {
+    display: grid;
+    align-content: start;
+    gap: 7px;
+    min-width: 0;
+  }
+  .cf__field > span {
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+  input:not([type='checkbox']),
+  select,
+  textarea {
+    width: 100%;
+    min-width: 0;
+    min-height: 52px;
+    padding: 13px 16px;
+    font: inherit;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--field-border);
+    border-radius: 12px;
+    caret-color: var(--teal);
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+  textarea {
+    resize: vertical;
+  }
+  input:not([type='checkbox']):focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 4px hsl(168 65% 34% / 0.18);
+  }
+  [aria-invalid='true'] {
+    border-color: hsl(4 72% 52%) !important;
+  }
+  .cf__err {
+    display: block;
+    min-height: 0;
+    font-style: normal;
+    font-size: 0.875rem;
+    color: hsl(4 72% 48%);
+  }
+  :global(html[data-theme='dark']) .cf__err {
+    color: hsl(4 85% 70%);
+  }
+  .cf__err:empty {
+    display: none;
+  }
+  .cf__hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .cf__consent {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-top: 20px;
+    font-size: 0.9375rem;
+    color: var(--ink-2);
+  }
+  .cf__consent input {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    accent-color: var(--teal);
+  }
+  .cf__actions {
+    margin-top: 22px;
+  }
+  .cf__spin {
+    display: none;
+  }
+  .cf__submit[aria-busy='true'] .cf__spin {
+    display: grid;
+    animation: spin 0.8s linear infinite;
+  }
+  .cf__submit[aria-busy='true'] svg:last-child {
+    display: none;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .cf__fail {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: hsl(4 72% 52% / 0.12);
+    color: var(--ink);
+  }
+  .cf__done {
+    padding: clamp(28px, 4vw, 44px);
+    border-radius: var(--r-lg);
+    background: var(--teal-tint);
+    box-shadow: inset 0 0 0 1px hsl(168 65% 34% / 0.25);
+    animation: done-in 0.7s var(--ease) both;
+  }
+  .cf__done:focus {
+    outline: none;
+  }
+  .cf__done h2 {
+    margin: 18px 0 10px;
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+  }
+  .cf__done p {
+    color: var(--ink-2);
+    max-width: 52ch;
+  }
+  .cf__done p:first-of-type {
+    color: var(--ink);
+    font-size: 1.125rem;
+  }
+  .cf__tick {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--teal-deep);
+    color: var(--btn-primary-fg);
+    animation: tick-pop 0.6s cubic-bezier(0.2, 1.5, 0.4, 1) 0.15s both;
+  }
+  .cf__ref {
+    margin-top: 12px;
+    font-size: 0.875rem;
+  }
+  .cf__ref span {
+    font-variant-numeric: tabular-nums;
+  }
+  .cf__alt {
+    margin: 8px 0 24px;
+    font-size: 0.9375rem;
+  }
+  @keyframes done-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.98);
+    }
+  }
+  @keyframes tick-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+  }
+  @media (min-width: 640px) {
+    .cf__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .cf__field--wide {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

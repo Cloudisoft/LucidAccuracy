@@ -40,3 +40,15 @@ npm run build
 - Connect the contact form to a form service or CRM. It currently opens the visitor's email app with the message filled in.
 - Have legal review `src/pages/privacy.astro` and `src/pages/terms.astro`.
 - Add social profile links to `site.social` in `src/data/site.ts`.
+
+## Contact form
+
+`server/index.mjs` serves the built site and receives the form at `POST /api/contact`. Every submission is written to the server log, appended to `$DATA_DIR/submissions.jsonl` (a Railway volume mounted at `/data`), and emailed to `NOTIFY_TO` once SMTP is configured.
+
+Railway variables:
+
+- `DATA_DIR=/data`, `NOTIFY_TO=Info@lucidaccuracy.com`
+- `SMTP_HOST=smtp.hostinger.com`, `SMTP_PORT=465`, `SMTP_USER=Info@lucidaccuracy.com`
+- `SMTP_PASS` — the mailbox password, set by the owner in the Railway dashboard (never commit it).
+
+`GET /api/health` reports whether email and storage are active. Run locally with `npm run build && npm start`.

@@ -2,9 +2,9 @@
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import Icon from '../components/Icon.astro';
+import ContactForm from '../components/ContactForm.astro';
 import { site, locations, markets, solutions } from '../data/site';
 const crumbs = [{ name: 'Contact', href: '/contact/' }];
-const topics = ['General enquiry', ...solutions.map((s) => s.nav), 'AI Calling Agent demo', 'Careers'];
 ---
 
 <Base
@@ -16,56 +16,13 @@ const topics = ['General enquiry', ...solutions.map((s) => s.nav), 'AI Calling A
 >
   <PageHero
     title="Talk to the LucidAccuracy team"
-    lead="Tell us what you need to hire, build or automate. We reply within one business day."
+    lead="Tell us what you need to hire, build or automate. Someone from our team will contact you within 24–48 hours."
     {crumbs}
   />
 
   <section class="section">
     <div class="wrap contact">
-      <form class="form" data-contact-form data-to={site.email} novalidate={false}>
-        <h2>Send a message</h2>
-        <div class="form__grid">
-          <label>
-            <span>Name</span>
-            <input type="text" name="name" autocomplete="name" required />
-          </label>
-          <label>
-            <span>Company <em>optional</em></span>
-            <input type="text" name="company" autocomplete="organization" />
-          </label>
-          <label>
-            <span>Email</span>
-            <input type="email" name="email" autocomplete="email" required />
-          </label>
-          <label>
-            <span>Phone <em>optional</em></span>
-            <input type="tel" name="phone" autocomplete="tel" />
-          </label>
-          <label>
-            <span>Country</span>
-            <select name="country">
-              {markets.filter((m) => m.code !== 'eu').map((m) => <option>{m.name}</option>)}
-              <option>Europe (other)</option>
-              <option>Other</option>
-            </select>
-          </label>
-          <label>
-            <span>Topic</span>
-            <select name="topic">
-              {topics.map((t) => <option value={t}>{t}</option>)}
-            </select>
-          </label>
-          <label class="form__wide">
-            <span>Message</span>
-            <textarea name="message" rows="6" required></textarea>
-          </label>
-        </div>
-        <button class="btn" type="submit">Send Message <Icon name="ArrowRight" /></button>
-        <p class="form__status" data-form-status tabindex="-1" hidden>
-          Your email app has opened with the message ready to send. If nothing opened, email us at{' '}
-          <a class="link" href={`mailto:${site.email}`}>{site.email}</a>.
-        </p>
-      </form>
+      <div class="form-col"><ContactForm /></div>
 
       <aside class="direct">
         <h2>Contact us directly</h2>
@@ -108,72 +65,9 @@ const topics = ['General enquiry', ...solutions.map((s) => s.nav), 'AI Calling A
     display: grid;
     gap: 56px 80px;
   }
-  .contact h2 {
+  .direct h2 {
     font-size: 1.75rem;
     margin-bottom: 28px;
-  }
-  .form__grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 18px;
-    margin-bottom: 28px;
-  }
-  label {
-    display: grid;
-    gap: 7px;
-    min-width: 0;
-  }
-  label > span {
-    font-weight: 600;
-    font-size: 0.9375rem;
-  }
-  label em {
-    font-style: normal;
-    font-weight: 400;
-    color: var(--ink-2);
-  }
-  .form {
-    min-width: 0;
-  }
-  input,
-  select,
-  textarea {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    min-height: 52px;
-    padding: 13px 16px;
-    font: inherit;
-    color: var(--ink);
-    background: var(--paper);
-    border: 1px solid var(--field-border);
-    border-radius: 12px;
-    caret-color: var(--teal);
-    transition:
-      border-color 0.2s,
-      box-shadow 0.2s;
-  }
-  textarea {
-    resize: vertical;
-  }
-  input:hover,
-  select:hover,
-  textarea:hover {
-    border-color: var(--ink-2);
-  }
-  input:focus-visible,
-  select:focus-visible,
-  textarea:focus-visible {
-    outline: none;
-    border-color: var(--teal);
-    box-shadow: 0 0 0 4px hsl(168 65% 34% / 0.18);
-  }
-  .form__status {
-    margin-top: 20px;
-    padding: 16px 18px;
-    border-radius: 12px;
-    background: var(--teal-tint);
-    color: var(--ink);
   }
   .direct__list {
     display: grid;
@@ -219,14 +113,6 @@ const topics = ['General enquiry', ...solutions.map((s) => s.nav), 'AI Calling A
   }
   .direct address span {
     display: block;
-  }
-  @media (min-width: 640px) {
-    .form__grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .form__wide {
-      grid-column: 1 / -1;
-    }
   }
   @media (min-width: 1000px) {
     .contact {

@@ -1,0 +1,10 @@
+[
+  { "value": "Recruitment & Workforce", "icon": "Users", "topics": ["Recruitment & Workforce", "General enquiry"] },
+  { "value": "Technology Solutions", "icon": "Code", "topics": ["Technology Solutions"] },
+  { "value": "LucidAI Calling Agent", "icon": "AudioLines", "topics": ["AI Calling Agent demo", "LucidAI Calling Agent"] },
+  { "value": "Training & Development", "icon": "GraduationCap", "topics": ["Training & Development"] },
+  { "value": "Consulting", "icon": "Compass", "topics": ["Consulting"] },
+  { "value": "Business Process Solutions", "icon": "Workflow", "topics": ["Business Process Solutions"] },
+  { "value": "Careers / job opportunities", "icon": "Briefcase", "topics": ["Careers"] },
+  { "value": "Something else", "icon": "MessageSquare", "topics": [] }
+]

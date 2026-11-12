@@ -773,45 +773,147 @@ function initCallDemo(signal: AbortSignal) {
   });
 }
 
+// ---------- On-screen notification ----------
+
+function toast(title: string, text: string) {
+  const el = document.querySelector<HTMLElement>('[data-toast]');
+  if (!el) return;
+  el.querySelector('[data-toast-title]')!.textContent = title;
+  el.querySelector('[data-toast-text]')!.textContent = text;
+  el.hidden = false;
+  el.classList.remove('is-out');
+  requestAnimationFrame(() => el.classList.add('is-in'));
+  window.clearTimeout(Number(el.dataset.timer || 0));
+  const hide = () => {
+    el.classList.remove('is-in');
+    el.classList.add('is-out');
+    window.setTimeout(() => (el.hidden = true), 450);
+  };
+  el.dataset.timer = String(window.setTimeout(hide, 9000));
+  el.querySelector<HTMLButtonElement>('[data-toast-close]')!.onclick = hide;
+}
+
 // ---------- Contact form ----------
-// No backend is connected yet: the form composes an email to the company address.
+// Posts to /api/contact (server/index.mjs). Errors appear under each field;
+// success swaps the form for a confirmation panel and shows a notification.
 
 function initContactForm(signal: AbortSignal) {
-  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
-  if (!form) return;
-  const status = form.querySelector<HTMLElement>('[data-form-status]')!;
-  const params = new URLSearchParams(location.search);
-  const topic = params.get('topic');
-  const select = form.querySelector<HTMLSelectElement>('select[name="topic"]');
-  if (topic && select) {
-    const match = Array.from(select.options).find((o) => o.value === topic);
-    if (match) select.value = match.value;
-  }
-  form.addEventListener(
-    'submit',
-    (e) => {
-      e.preventDefault();
-      if (!form.reportValidity()) return;
-      const data = new FormData(form);
-      const get = (k: string) => String(data.get(k) || '').trim();
-      const subject = `${get('topic')} enquiry from ${get('name')}${get('company') ? `, ${get('company')}` : ''}`;
-      const body = [
-        get('message'),
-        '',
-        `Name: ${get('name')}`,
-        get('company') && `Company: ${get('company')}`,
-        `Email: ${get('email')}`,
-        get('phone') && `Phone: ${get('phone')}`,
-        get('country') && `Country: ${get('country')}`,
-      ]
-        .filter((l) => l !== false && l !== '')
-        .join('\n');
-      location.href = `mailto:${form.dataset.to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      status.hidden = false;
-      status.focus();
-    },
-    { signal },
-  );
+  document.querySelectorAll<HTMLElement>('[data-cf]').forEach((root) => {
+    const form = root.querySelector<HTMLFormElement>('[data-cf-form]')!;
+    const done = root.querySelector<HTMLElement>('[data-cf-done]')!;
+    const submit = root.querySelector<HTMLButtonElement>('[data-cf-submit]')!;
+    const fail = root.querySelector<HTMLElement>('[data-cf-fail]')!;
+
+    // ?topic= from "Book a Demo" style links pre-ticks the matching service.
+    const topic = new URLSearchParams(location.search).get('topic');
+    if (topic) {
+      form.querySelectorAll<HTMLInputElement>('input[name="services"]').forEach((box) => {
+        if ((box.dataset.topics || '').split('|').includes(topic) || box.value === topic) box.checked = true;
+      });
+    }
+
+    const setError = (name: string, msg: string) => {
+      const out = form.querySelector<HTMLElement>(`[data-err="${name}"]`);
+      if (out) out.textContent = msg;
+      form.querySelectorAll<HTMLElement>(`[name="${name}"]`).forEach((f) => (msg ? f.setAttribute('aria-invalid', 'true') : f.removeAttribute('aria-invalid')));
+    };
+    const clearErrors = () => form.querySelectorAll<HTMLElement>('[data-err]').forEach((e) => setError(e.dataset.err!, ''));
+
+    const collect = () => {
+      const fd = new FormData(form);
+      return {
+        name: String(fd.get('name') || '').trim(),
+        email: String(fd.get('email') || '').trim(),
+        phone: String(fd.get('phone') || '').trim(),
+        company: String(fd.get('company') || '').trim(),
+        country: String(fd.get('country') || '').trim(),
+        message: String(fd.get('message') || '').trim(),
+        services: fd.getAll('services').map(String),
+        consent: fd.get('consent') === 'on',
+        website: String(fd.get('website') || ''),
+        page: location.pathname,
+      };
+    };
+
+    const check = (d: ReturnType<typeof collect>) => {
+      const e: Record<string, string> = {};
+      if (d.name.length < 2) e.name = 'Enter your name.';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)) e.email = 'Enter an email address like name@company.com.';
+      if (d.phone && !/^[+()\d\s.-]{6,}$/.test(d.phone)) e.phone = 'Enter a phone number using digits, spaces or +.';
+      if (!d.services.length) e.services = 'Choose at least one service you are interested in.';
+      if (d.message.length < 10) e.message = 'Tell us a little more: at least 10 characters.';
+      if (!d.consent) e.consent = 'Please agree to the privacy policy so we can reply.';
+      return e;
+    };
+
+    // Clear a field's error as soon as it is corrected.
+    form.addEventListener(
+      'input',
+      (ev) => {
+        const name = (ev.target as HTMLInputElement).name;
+        if (name && form.querySelector(`[data-err="${name}"]`)?.textContent) setError(name, '');
+      },
+      { signal },
+    );
+
+    form.addEventListener(
+      'submit',
+      async (ev) => {
+        ev.preventDefault();
+        fail.hidden = true;
+        clearErrors();
+        const data = collect();
+        const errors = check(data);
+        if (Object.keys(errors).length) {
+          Object.entries(errors).forEach(([k, v]) => setError(k, v));
+          const first = form.querySelector<HTMLElement>('[aria-invalid="true"]');
+          first?.focus();
+          return;
+        }
+        submit.setAttribute('aria-busy', 'true');
+        submit.disabled = true;
+        try {
+          const res = await fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+          const out = await res.json().catch(() => ({}));
+          if (res.status === 422 && out.errors) {
+            Object.entries(out.errors as Record<string, string>).forEach(([k, v]) => setError(k, v));
+            return;
+          }
+          if (!res.ok || !out.ok) throw new Error(out.error || 'send failed');
+          root.querySelector('[data-cf-name]')!.textContent = `, ${data.name.split(' ')[0]}`;
+          root.querySelector('[data-cf-ref]')!.textContent = String(out.id).slice(0, 8).toUpperCase();
+          form.hidden = true;
+          done.hidden = false;
+          done.focus({ preventScroll: true });
+          done.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          toast('Your request has been submitted', 'Someone from our team will contact you within 24–48 hours.');
+        } catch (err) {
+          fail.textContent = `We could not send your request just now. Please try again, or email ${'Info@lucidaccuracy.com'} or call +1 307-999-9564.`;
+          fail.hidden = false;
+        } finally {
+          submit.removeAttribute('aria-busy');
+          submit.disabled = false;
+        }
+      },
+      { signal },
+    );
+
+    root.querySelector<HTMLButtonElement>('[data-cf-again]')!.addEventListener(
+      'click',
+      () => {
+        form.reset();
+        clearErrors();
+        done.hidden = true;
+        form.hidden = false;
+        form.querySelector<HTMLElement>('input[name="services"]')?.focus();
+      },
+      { signal },
+    );
+  });
 }
 
 function init() {

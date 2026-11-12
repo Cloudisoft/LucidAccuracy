@@ -8,6 +8,7 @@ import CallDemo from '../components/CallDemo.astro';
 import Cta from '../components/Cta.astro';
 import photos from '../data/photos.json';
 import VideoPlayer from '../components/VideoPlayer.astro';
+import ContactForm from '../components/ContactForm.astro';
 import { videos, videoSchema } from '../data/videos';
 import { site, pillars, solutions, industries, techCapabilities, whyUs, projects, agent, locations, markets } from '../data/site';
 
@@ -411,6 +412,25 @@ const shortlist = [
           ))
         }
       </ol>
+    </div>
+  </section>
+
+  <!-- 10. Enquiry -->
+  <section class="section section--sand enquiry" id="enquiry">
+    <div class="wrap enquiry__in">
+      <div class="enquiry__head">
+        <h2 data-reveal="mask">Tell us what you need</h2>
+        <p class="lead" data-reveal style="--i:1">
+          Pick the services you are interested in and add a short note. Someone from our team will contact you within
+          24–48 hours.
+        </p>
+        <ul class="enquiry__facts" data-reveal style="--i:2">
+          <li><Icon name="Clock" size={18} /> Reply within 24–48 hours</li>
+          <li><Icon name="Globe" size={18} /> Six markets, one team</li>
+          <li><Icon name="ShieldCheck" size={18} /> Details used only to reply</li>
+        </ul>
+      </div>
+      <div class="enquiry__form" data-reveal="open"><ContactForm compact heading="Send a quick request" /></div>
     </div>
   </section>
 
@@ -1288,6 +1308,47 @@ const shortlist = [
   @media (min-width: 900px) {
     .work__grid {
       grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* ---------- Enquiry ---------- */
+  .enquiry__in {
+    display: grid;
+    gap: 40px 72px;
+  }
+  .enquiry__head .lead {
+    margin-top: 18px;
+  }
+  .enquiry__facts {
+    display: grid;
+    gap: 12px;
+    margin-top: 28px;
+    font-weight: 500;
+  }
+  .enquiry__facts li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .enquiry__facts :global(svg) {
+    color: var(--teal-deep);
+  }
+  .enquiry__form {
+    padding: clamp(24px, 3.5vw, 40px);
+    border-radius: var(--r-lg);
+    background: var(--paper);
+    box-shadow:
+      inset 0 0 0 1px var(--line),
+      var(--shadow-1);
+  }
+  @media (min-width: 1000px) {
+    .enquiry__in {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      align-items: start;
+    }
+    .enquiry__head {
+      position: sticky;
+      top: calc(var(--header-h) + 32px);
     }
   }
 
