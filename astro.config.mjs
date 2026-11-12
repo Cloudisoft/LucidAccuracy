@@ -4,6 +4,8 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://lucidaccuracy.com',
   trailingSlash: 'always',
+  // Pages load on hover or touch, so moving between them feels instant.
+  prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
   integrations: [sitemap()],
   // Old URLs from the previous site keep working.
   redirects: {

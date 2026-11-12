@@ -2,7 +2,7 @@
 // client-side page transitions, and is torn down through one AbortController.
 
 import Lenis from 'lenis';
-import { initCounters, initProgress, initButtons } from './effects';
+import { initCounters, initProgress, initButtons, initLiveLoops } from './effects';
 
 let teardown: AbortController | null = null;
 
@@ -11,8 +11,8 @@ let teardown: AbortController | null = null;
 // and stays in sync with the address bar and pull-to-refresh.
 function initSmoothScroll(signal: AbortSignal) {
   const lenis = new Lenis({
-    duration: 1.05,
-    easing: (t) => 1 - Math.pow(1 - t, 4),
+    lerp: 0.075,
+    wheelMultiplier: 0.9,
     smoothWheel: true,
     syncTouch: false,
     anchors: { offset: -88 },
@@ -226,12 +226,12 @@ async function initGlobe(signal: AbortSignal) {
   // Connecting-dots network on the globe: cities across the markets we serve,
   // each linked to its neighbours, with pulses travelling along the links.
   const cities: [number, number][] = [
-    [40.7, -74], [37.8, -122.4], [41.9, -87.6], [32.8, -96.8], [33.7, -84.4], [47.6, -122.3], [38.6, -121.5], [41.7, -72.6], [40.9, -81.4], [25.8, -80.2], [39.7, -105],
-    [43.7, -79.4], [45.5, -73.6], [49.3, -123.1], [51, -114],
-    [51.5, -0.1], [53.5, -2.2], [55.9, -3.2],
-    [48.9, 2.4], [52.5, 13.4], [52.4, 4.9], [40.4, -3.7], [45.5, 9.2], [50.1, 8.7], [59.3, 18.1],
-    [19.1, 72.9], [28.6, 77.2], [12.97, 77.6], [17.4, 78.5], [13.1, 80.3], [18.5, 73.9],
-    [-33.9, 151.2], [-37.8, 145], [-27.5, 153], [-31.95, 115.9],
+    [40.7, -74], [37.8, -122.4], [41.9, -87.6], [32.8, -96.8], [38.6, -121.5], [41.7, -72.6], [40.9, -81.4],
+    [43.7, -79.4], [49.3, -123.1],
+    [51.5, -0.1], [53.5, -2.2],
+    [48.9, 2.4], [52.5, 13.4], [52.4, 4.9],
+    [19.1, 72.9], [28.6, 77.2], [12.97, 77.6],
+    [-33.9, 151.2], [-37.8, 145],
   ];
   const cityVecs = cities.map(([la, lo]) => toVec(la, lo));
   const lift = (from: Vec, to: Vec, steps: number, height: number) => {
@@ -253,8 +253,8 @@ async function initGlobe(signal: AbortSignal) {
       .map((b, j) => ({ j, d: Math.acos(Math.max(-1, Math.min(1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2]))) }))
       .filter((n) => n.j > i && n.d < 0.42)
       .sort((x, y) => x.d - y.d)
-      .slice(0, 3);
-    near.forEach((n) => links.push(lift(a, cityVecs[n.j], 14, 0.012 + n.d * 0.05)));
+      .slice(0, 2);
+    near.forEach((n) => links.push(lift(a, cityVecs[n.j], 10, 0.012 + n.d * 0.05)));
   });
 
   let w = 0;
@@ -262,11 +262,42 @@ async function initGlobe(signal: AbortSignal) {
   let dpr = 1;
   const resize = () => {
     const rect = canvas.getBoundingClientRect();
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     w = rect.width;
     h = rect.height;
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
+    paintBody();
+  };
+  // The halo and sphere never change, so they are painted once per size.
+  const bodyLayer = document.createElement('canvas');
+  const paintBody = () => {
+    bodyLayer.width = canvas.width;
+    bodyLayer.height = canvas.height;
+    const b = bodyLayer.getContext('2d');
+    if (!b || !w) return;
+    b.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const R = Math.min(w, h) * 0.39;
+    const cx = w / 2;
+    const cy = h / 2;
+    const halo = b.createRadialGradient(cx, cy, R * 0.97, cx, cy, R * 1.22);
+    halo.addColorStop(0, 'hsla(166, 58%, 52%, 0.22)');
+    halo.addColorStop(0.35, 'hsla(166, 58%, 52%, 0.07)');
+    halo.addColorStop(1, 'hsla(166, 58%, 52%, 0)');
+    b.fillStyle = halo;
+    b.beginPath();
+    b.arc(cx, cy, R * 1.22, 0, Math.PI * 2);
+    b.fill();
+    const body = b.createRadialGradient(cx - R * 0.35, cy - R * 0.45, R * 0.1, cx, cy, R);
+    body.addColorStop(0, 'hsl(180, 30%, 15%)');
+    body.addColorStop(1, 'hsl(188, 42%, 8%)');
+    b.fillStyle = body;
+    b.beginPath();
+    b.arc(cx, cy, R, 0, Math.PI * 2);
+    b.fill();
+    b.strokeStyle = 'hsla(166, 58%, 52%, 0.3)';
+    b.lineWidth = 1;
+    b.stroke();
   };
   resize();
   const ro = new ResizeObserver(() => {
@@ -302,105 +333,112 @@ async function initGlobe(signal: AbortSignal) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
 
-    // Atmosphere and body
-    const halo = ctx.createRadialGradient(cx, cy, R * 0.97, cx, cy, R * 1.22);
-    halo.addColorStop(0, 'hsla(166, 58%, 52%, 0.26)');
-    halo.addColorStop(0.35, 'hsla(166, 58%, 52%, 0.09)');
-    halo.addColorStop(1, 'hsla(166, 58%, 52%, 0)');
-    ctx.fillStyle = halo;
-    ctx.beginPath();
-    ctx.arc(cx, cy, R * 1.22, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.drawImage(bodyLayer, 0, 0);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    const body = ctx.createRadialGradient(cx - R * 0.35, cy - R * 0.45, R * 0.1, cx, cy, R);
-    body.addColorStop(0, 'hsl(180, 30%, 15%)');
-    body.addColorStop(1, 'hsl(188, 42%, 8%)');
-    ctx.fillStyle = body;
-    ctx.beginPath();
-    ctx.arc(cx, cy, R, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = 'hsla(166, 58%, 52%, 0.35)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    // Land
+    // Land: dots grouped into four brightness bands, one path per band.
     const base = Math.max(1, R * 0.0062);
-    for (let i = 0; i < dots.length; i++) {
-      project(dots[i], p);
-      if (p[2] <= 0) continue;
-      ctx.globalAlpha = 0.18 + 0.72 * p[2];
-      ctx.fillStyle = 'hsl(166, 52%, 56%)';
+    ctx.fillStyle = 'hsl(166, 52%, 56%)';
+    for (let band = 0; band < 4; band++) {
+      const lo = band / 4;
+      const hi = (band + 1) / 4;
+      ctx.globalAlpha = 0.16 + 0.66 * (lo + 0.125);
       ctx.beginPath();
-      ctx.arc(cx + p[0] * R, cy - p[1] * R, base * (0.55 + 0.45 * p[2]), 0, Math.PI * 2);
+      for (let i = 0; i < dots.length; i++) {
+        project(dots[i], p);
+        if (p[2] <= lo || p[2] > hi) continue;
+        const x = cx + p[0] * R;
+        const y = cy - p[1] * R;
+        const r = base * (0.55 + 0.45 * p[2]);
+        ctx.moveTo(x + r, y);
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+      }
       ctx.fill();
     }
     ctx.globalAlpha = 1;
 
     const time = now / 1000;
     ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
 
-    // City network
-    links.forEach((pts, li) => {
-      const head = (time * 0.35 + li * 0.173) % 1.6;
-      for (let i = 1; i < pts.length; i++) {
-        project(pts[i - 1], p);
-        const x0 = p[0];
-        const y0 = p[1];
-        const z0 = p[2];
+    // Traces a 3D polyline into the current path, skipping the far side.
+    const trace = (pts: Vec[], from = 0, to = pts.length - 1, horizon = 0.02) => {
+      let pen = false;
+      for (let i = from; i <= to; i++) {
         project(pts[i], p);
-        if (z0 <= 0.02 || p[2] <= 0.02) continue;
-        const t = i / pts.length;
-        const d = head - t;
-        const lit = d > 0 && d < 0.3 ? 1 - d / 0.3 : 0;
-        ctx.strokeStyle = `hsla(166, 70%, ${62 + lit * 20}%, ${(0.22 + lit * 0.7) * Math.min(1, p[2] * 2.5)})`;
-        ctx.lineWidth = 0.8 + lit * 1.2;
-        ctx.beginPath();
-        ctx.moveTo(cx + x0 * R, cy - y0 * R);
-        ctx.lineTo(cx + p[0] * R, cy - p[1] * R);
-        ctx.stroke();
+        const hidden = p[2] <= horizon && Math.hypot(p[0], p[1]) < 1;
+        if (hidden) {
+          pen = false;
+          continue;
+        }
+        const x = cx + p[0] * R;
+        const y = cy - p[1] * R;
+        if (pen) ctx.lineTo(x, y);
+        else ctx.moveTo(x, y);
+        pen = true;
       }
-    });
-    cityVecs.forEach((v, i) => {
-      project(v, p);
-      if (p[2] <= 0.03) return;
-      const vis = Math.min(1, p[2] * 2.5);
+    };
+    // A soft moving dot along a polyline at fraction f (0..1).
+    const glider = (pts: Vec[], f: number, colour: string, size: number) => {
+      const k = Math.min(pts.length - 1, Math.max(0, Math.round(f * (pts.length - 1))));
+      project(pts[k], p);
+      if (p[2] <= 0.02 && Math.hypot(p[0], p[1]) < 1) return;
       const x = cx + p[0] * R;
       const y = cy - p[1] * R;
-      const glow = (Math.sin(time * 2 + i) + 1) / 2;
-      ctx.globalAlpha = vis * 0.25 * glow;
-      ctx.fillStyle = 'hsl(166, 80%, 70%)';
+      ctx.fillStyle = colour;
+      ctx.globalAlpha = 0.25;
       ctx.beginPath();
-      ctx.arc(x, y, 3 + glow * 4, 0, Math.PI * 2);
+      ctx.arc(x, y, size * 2.6, 0, Math.PI * 2);
       ctx.fill();
-      ctx.globalAlpha = vis;
-      ctx.fillStyle = 'hsl(160, 60%, 88%)';
+      ctx.globalAlpha = 1;
       ctx.beginPath();
-      ctx.arc(x, y, Math.max(1.6, R * 0.0065), 0, Math.PI * 2);
+      ctx.arc(x, y, size, 0, Math.PI * 2);
       ctx.fill();
+    };
+
+    // City network: all links in one faint stroke, a few light pulses.
+    ctx.strokeStyle = 'hsla(166, 70%, 66%, 0.22)';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    links.forEach((pts) => trace(pts));
+    ctx.stroke();
+    links.forEach((pts, li) => {
+      if (li % 2) return;
+      const f = (time * 0.18 + li * 0.137) % 1;
+      glider(pts, f, 'hsl(166, 80%, 74%)', 1.6);
     });
+    ctx.fillStyle = 'hsl(160, 60%, 88%)';
+    ctx.globalAlpha = 0.85;
+    ctx.beginPath();
+    cityVecs.forEach((v) => {
+      project(v, p);
+      if (p[2] <= 0.03) return;
+      const x = cx + p[0] * R;
+      const y = cy - p[1] * R;
+      const r = Math.max(1.4, R * 0.0055);
+      ctx.moveTo(x + r, y);
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+    });
+    ctx.fill();
     ctx.globalAlpha = 1;
 
-    // Arcs with a travelling pulse
+    // Market arcs: a quiet base line with one bright travelling trail each.
+    ctx.strokeStyle = 'hsla(38, 90%, 58%, 0.22)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    arcs.forEach((pts) => trace(pts, 0, pts.length - 1, 0));
+    ctx.stroke();
     arcs.forEach((pts, a) => {
-      const head = (time * 0.22 + a * 0.27) % 1.35;
-      for (let i = 1; i < pts.length; i++) {
-        project(pts[i - 1], p);
-        const x0 = p[0];
-        const y0 = p[1];
-        const z0 = p[2];
-        project(pts[i], p);
-        if (z0 < 0 && Math.hypot(x0, y0) < 1) continue;
-        if (p[2] < 0 && Math.hypot(p[0], p[1]) < 1) continue;
-        const t = i / pts.length;
-        const d = head - t;
-        const lit = d > 0 && d < 0.28 ? 1 - d / 0.28 : 0;
-        ctx.strokeStyle = `hsla(38, 90%, 58%, ${0.16 + lit * 0.84})`;
-        ctx.lineWidth = 1 + lit * 1.4;
-        ctx.beginPath();
-        ctx.moveTo(cx + x0 * R, cy - y0 * R);
-        ctx.lineTo(cx + p[0] * R, cy - p[1] * R);
-        ctx.stroke();
-      }
+      const head = (time * 0.16 + a * 0.23) % 1.25;
+      if (head > 1) return;
+      const end = Math.round(head * (pts.length - 1));
+      const start = Math.max(0, end - 10);
+      ctx.strokeStyle = 'hsla(38, 92%, 60%, 0.9)';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      trace(pts, start, end, 0);
+      ctx.stroke();
     });
 
     // Offices
@@ -460,7 +498,7 @@ async function initGlobe(signal: AbortSignal) {
       const idle = now - lastInteraction > 1800;
       rot += velocity;
       velocity *= 0.94;
-      if (idle) rot += dt * 0.00009; // one turn in about 70 seconds
+      if (idle) rot += dt * 0.00007; // one turn in about 70 seconds
     }
     draw(now);
     requestAnimationFrame(frame);
@@ -791,6 +829,7 @@ function init() {
   initGlobe(signal);
   initCounters(signal);
   initButtons(signal);
+  initLiveLoops(signal);
   initProgress(signal);
 }
 

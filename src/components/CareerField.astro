@@ -23,7 +23,7 @@ const rand = (n: number) => {
   const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
   return x - Math.floor(x);
 };
-const count = Math.round(16 * density);
+const count = Math.round(9 * density);
 const items = Array.from({ length: count }, (_, i) => ({
   icon: icons[i % icons.length],
   x: (i / count) * 100 + rand(i) * (100 / count) * 0.8,
@@ -32,7 +32,7 @@ const items = Array.from({ length: count }, (_, i) => ({
   delay: -rand(i + 11) * 40,
   sway: 10 + rand(i + 5) * 24,
 }));
-const cards = statuses.slice(0, Math.max(2, Math.round(3 * density))).map((c, i) => ({
+const cards = (tone === 'light' ? [] : statuses.slice(0, 2)).map((c, i) => ({
   ...c,
   // Cards stay in the right-hand half, clear of the headline and copy.
   x: 58 + ((i * 23) % 34),
@@ -41,7 +41,7 @@ const cards = statuses.slice(0, Math.max(2, Math.round(3 * density))).map((c, i)
 }));
 ---
 
-<div class:list={['field', `field--${tone}`]} aria-hidden="true">
+<div class:list={['field', `field--${tone}`]} data-field aria-hidden="true">
   {
     items.map((it) => (
       <span class="field__icon" style={`--x:${it.x.toFixed(1)}%;--d:${it.dur.toFixed(1)}s;--o:${it.delay.toFixed(1)}s;--sway:${it.sway.toFixed(0)}px`}>
@@ -81,13 +81,12 @@ const cards = statuses.slice(0, Math.max(2, Math.round(3 * density))).map((c, i)
     animation:
       rise var(--d) linear var(--o) infinite,
       sway calc(var(--d) / 3) ease-in-out var(--o) infinite alternate;
-    will-change: transform;
   }
   .field__icon {
-    color: hsl(166 58% 62% / 0.32);
+    color: hsl(166 58% 62% / 0.2);
   }
   .field--light .field__icon {
-    color: hsl(168 65% 34% / 0.2);
+    color: hsl(168 65% 34% / 0.14);
   }
   .field__card {
     display: flex;
@@ -100,7 +99,7 @@ const cards = statuses.slice(0, Math.max(2, Math.round(3 * density))).map((c, i)
     color: hsl(150 22% 95% / 0.72);
     font-size: 0.75rem;
     white-space: nowrap;
-    opacity: 0.75;
+    opacity: 0.55;
   }
   .field--light .field__card {
     background: var(--glass);
@@ -160,6 +159,11 @@ const cards = statuses.slice(0, Math.max(2, Math.round(3 * density))).map((c, i)
   }
   .field {
     container-type: size;
+  }
+  /* Off screen, the drift stops so it costs nothing while you scroll elsewhere. */
+  .field:not(.is-live) .field__icon,
+  .field:not(.is-live) .field__card {
+    animation-play-state: paused;
   }
   @media (max-width: 999px) {
     .field__card {

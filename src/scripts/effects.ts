@@ -76,3 +76,14 @@ export function initButtons(signal: AbortSignal) {
     );
   });
 }
+
+// Decorative loops run only while on screen.
+export function initLiveLoops(signal: AbortSignal) {
+  const els = document.querySelectorAll<HTMLElement>('[data-field], .marquee');
+  if (!els.length) return;
+  const io = new IntersectionObserver((entries) => entries.forEach((e) => e.target.classList.toggle('is-live', e.isIntersecting)), {
+    rootMargin: '120px 0px',
+  });
+  els.forEach((el) => io.observe(el));
+  signal.addEventListener('abort', () => io.disconnect());
+}
