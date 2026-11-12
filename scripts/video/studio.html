@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>LucidAccuracy video studio</title>
+    <!--
+      Motion-graphics studio for the site videos. Open with ?v=<id>.
+      Everything is driven by window.seek(t): CSS animations are paused and
+      positioned by time, JS-driven parts are redrawn from t. render.mjs steps
+      t through 30 seconds at 30 fps and pipes screenshots into ffmpeg.
+    -->
+    <style>
+      @font-face {
+        font-family: 'Display';
+        src: url('../../node_modules/@fontsource-variable/schibsted-grotesk/files/schibsted-grotesk-latin-wght-normal.woff2') format('woff2');
+        font-weight: 400 900;
+      }
+      @font-face {
+        font-family: 'Body';
+        src: url('../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2');
+        font-weight: 100 900;
+      }
+      :root {
+        --night: #08171a;
+        --night-2: #0e2125;
+        --night-3: #142b2f;
+        --line: rgba(255, 255, 255, 0.1);
+        --text: #eef6f1;
+        --muted: #a7c2ba;
+        --teal: #1e8f79;
+        --teal-bright: #3fd0ae;
+        --amber: #eca01d;
+        --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        width: 1280px;
+        height: 720px;
+        overflow: hidden;
+        background: var(--night);
+        color: var(--text);
+        font-family: 'Body', sans-serif;
+      }
+      .stage {
+        position: relative;
+        width: 1280px;
+        height: 720px;
+        overflow: hidden;
+        background:
+          radial-gradient(70% 90% at 85% 40%, rgba(30, 143, 121, 0.28), transparent 70%),
+          radial-gradient(50% 60% at 0% 100%, rgba(236, 160, 29, 0.1), transparent 70%),
+          var(--night);
+      }
+      .grid {
+        position: absolute;
+        inset: -80px;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+        background-size: 64px 64px;
+      }
+      .brand {
+        position: absolute;
+        left: 56px;
+        top: 40px;
+        z-index: 5;
+        font: 700 22px/1 'Display';
+        letter-spacing: -0.03em;
+      }
+      .brand b {
+        color: var(--teal-bright);
+      }
+      .tag {
+        position: absolute;
+        right: 56px;
+        top: 36px;
+        z-index: 5;
+        padding: 7px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        font: 600 13px 'Body';
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .bar {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        z-index: 5;
+        height: 4px;
+        width: 100%;
+        background: linear-gradient(90deg, var(--teal-bright), var(--amber));
+        transform-origin: left;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        padding: 120px 56px 70px;
+        opacity: 0;
+      }
+      .row {
+        display: flex;
+        gap: 56px;
+        align-items: center;
+        height: 100%;
+      }
+      .col {
+        flex: 1;
+        min-width: 0;
+      }
+      .kicker {
+        font: 600 15px 'Body';
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--teal-bright);
+        margin-bottom: 18px;
+      }
+      .kicker i {
+        color: var(--amber);
+        font-style: normal;
+      }
+      h1,
+      h2 {
+        font-family: 'Display';
+        font-weight: 600;
+        letter-spacing: -0.035em;
+        line-height: 1.04;
+      }
+      h1 {
+        font-size: 72px;
+      }
+      h2 {
+        font-size: 50px;
+      }
+      h1 em,
+      h2 em {
+        font-style: normal;
+        color: var(--amber);
+      }
+      .lead {
+        margin-top: 22px;
+        font-size: 24px;
+        line-height: 1.45;
+        color: var(--muted);
+        max-width: 30ch;
+      }
+      .step {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        font: 700 15px 'Body';
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--amber);
+      }
+      .step b {
+        display: grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: rgba(236, 160, 29, 0.16);
+      }
+      .card {
+        background: var(--night-2);
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.8);
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 16px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--line);
+        font: 600 17px 'Body';
+        white-space: nowrap;
+      }
+      .chip svg,
+      .ico svg {
+        width: 100%;
+        height: 100%;
+      }
+      .ico {
+        display: inline-grid;
+        width: 24px;
+        height: 24px;
+        color: var(--teal-bright);
+        flex: none;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      /* Animation vocabulary. Every one is paused and positioned by seek(). */
+      .a {
+        animation-duration: 0.9s;
+        animation-timing-function: var(--ease);
+        animation-fill-mode: both;
+        animation-delay: calc(var(--t) * 1s);
+        animation-play-state: paused;
+      }
+      .up {
+        animation-name: up;
+      }
+      .pop {
+        animation-name: pop;
+        animation-timing-function: cubic-bezier(0.2, 1.4, 0.4, 1);
+      }
+      .fade {
+        animation-name: fade;
+      }
+      .left {
+        animation-name: left;
+      }
+      .right {
+        animation-name: right;
+      }
+      .growx {
+        animation-name: growx;
+        transform-origin: left;
+      }
+      .growy {
+        animation-name: growy;
+        transform-origin: bottom;
+      }
+      .focus {
+        animation-name: focus;
+        animation-duration: 1.1s;
+      }
+      .draw {
+        animation-name: draw;
+        animation-duration: 1.2s;
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+      }
+      @keyframes up {
+        from {
+          opacity: 0;
+          transform: translateY(36px);
+        }
+      }
+      @keyframes pop {
+        from {
+          opacity: 0;
+          transform: scale(0.6);
+        }
+      }
+      @keyframes fade {
+        from {
+          opacity: 0;
+        }
+      }
+      @keyframes left {
+        from {
+          opacity: 0;
+          transform: translateX(-60px);
+        }
+      }
+      @keyframes right {
+        from {
+          opacity: 0;
+          transform: translateX(60px);
+        }
+      }
+      @keyframes growx {
+        from {
+          transform: scaleX(0);
+        }
+      }
+      @keyframes growy {
+        from {
+          transform: scaleY(0);
+        }
+      }
+      @keyframes focus {
+        from {
+          opacity: 0;
+          filter: blur(16px);
+          transform: translateY(14px);
+        }
+      }
+      @keyframes draw {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      /* Shared parts */
+      .flags {
+        display: flex;
+        gap: 12px;
+        margin-top: 34px;
+      }
+      .flags span {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 14px 8px 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--line);
+        font: 600 16px 'Body';
+      }
+      .flags img {
+        width: 30px;
+        height: 22px;
+        border-radius: 4px;
+        object-fit: cover;
+      }
+      .end {
+        display: grid;
+        place-items: center;
+        text-align: center;
+        align-content: center;
+        gap: 22px;
+        height: 100%;
+      }
+      .end .word {
+        font: 700 92px/1 'Display';
+        letter-spacing: -0.04em;
+      }
+      .end .word b {
+        color: var(--teal-bright);
+      }
+      .end .line {
+        font: 500 28px 'Display';
+        color: var(--muted);
+        letter-spacing: -0.01em;
+      }
+      .end .cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 8px;
+        padding: 16px 28px;
+        border-radius: 999px;
+        background: var(--amber);
+        color: #10221f;
+        font: 700 22px 'Body';
+      }
+      .end .url {
+        font: 600 20px 'Body';
+        color: var(--teal-bright);
+        letter-spacing: 0.04em;
+      }
+      .rule {
+        width: 120px;
+        height: 4px;
+        border-radius: 2px;
+        background: linear-gradient(90deg, var(--teal-bright), var(--amber));
+      }
+      .tiles {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-top: 30px;
+      }
+      .tile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 18px;
+        border-radius: 16px;
+        background: var(--night-2);
+        border: 1px solid var(--line);
+        font: 600 18px 'Body';
+      }
+      .tile .ico {
+        width: 28px;
+        height: 28px;
+      }
+      .big-ico {
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--night);
+        background: var(--teal-bright);
+      }
+      .big-ico svg {
+        width: 46%;
+        height: 46%;
+      }
+      .ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 2px solid var(--teal-bright);
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage" id="stage">
+      <div class="grid" id="grid"></div>
+      <div class="brand">Lucid<b>Accuracy</b></div>
+      <div class="tag" id="tag"></div>
+      <div id="scenes"></div>
+      <div class="bar" id="bar"></div>
+    </div>
+    <script src="icons.js"></script>
+    <script src="studio.js"></script>
+  </body>
+</html>
