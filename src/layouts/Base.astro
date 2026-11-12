@@ -5,7 +5,7 @@ import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { site, locations, markets } from '../data/site';
+import { site, locations, markets, solutions, agent } from '../data/site';
 
 interface Props {
   title: string;
@@ -49,6 +49,14 @@ const organization = {
     email: site.email,
     availableLanguage: 'English',
   },
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'LucidAccuracy solutions',
+    itemListElement: [
+      ...solutions.map((x) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: x.title, url: `${site.url}/solutions/${x.slug}/`, description: x.summary } })),
+      { '@type': 'Offer', itemOffered: { '@type': 'SoftwareApplication', name: agent.name, url: `${site.url}/ai-calling-agent/`, applicationCategory: 'BusinessApplication' } },
+    ],
+  },
   knowsAbout: [
     'Recruitment and workforce solutions',
     'Technology solutions',
@@ -85,7 +93,21 @@ const breadcrumb = crumbs.length
     }
   : null;
 
-const graphs = [organization, website, ...(breadcrumb ? [breadcrumb] : []), ...schema];
+const webpage = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${canonical}#webpage`,
+  url: canonical,
+  name: title,
+  description,
+  isPartOf: { '@id': `${site.url}/#website` },
+  about: { '@id': `${site.url}/#organization` },
+  primaryImageOfPage: ogImage,
+  inLanguage: 'en',
+  dateModified: new Date().toISOString().slice(0, 10),
+};
+
+const graphs = [organization, website, webpage, ...(breadcrumb ? [breadcrumb] : []), ...schema];
 ---
 
 <!doctype html>

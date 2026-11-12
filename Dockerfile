@@ -13,6 +13,6 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 COPY --from=build /app/dist ./dist
 COPY server ./server
-COPY src/data/contact-services.json ./src/data/contact-services.json
+COPY src/data/contact-services.json src/data/redirects.json ./src/data/
 EXPOSE 8080
 CMD ["node", "server/index.mjs"]

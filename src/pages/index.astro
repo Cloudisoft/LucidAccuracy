@@ -10,7 +10,9 @@ import photos from '../data/photos.json';
 import VideoPlayer from '../components/VideoPlayer.astro';
 import ContactForm from '../components/ContactForm.astro';
 import { videos, videoSchema } from '../data/videos';
-import { site, pillars, solutions, industries, techCapabilities, whyUs, projects, agent, locations, markets } from '../data/site';
+import Faq from '../components/Faq.astro';
+import { faqSchema } from '../data/schema';
+import { homeFaqs, site, pillars, solutions, industries, techCapabilities, whyUs, projects, agent, locations, markets } from '../data/site';
 
 const support = solutions.filter((s) => ['training', 'consulting', 'business-process'].includes(s.slug));
 const featured = [projects[0], projects[2], projects[1]];
@@ -45,7 +47,7 @@ const shortlist = [
 ];
 ---
 
-<Base title="LucidAccuracy | Global Workforce, Technology & Business Solutions" description={site.description} og="home" schema={videos.map((v) => videoSchema(v, site.url))}>
+<Base title="LucidAccuracy | Global Workforce, Technology & Business Solutions" description={site.description} og="home" schema={[faqSchema(homeFaqs), ...videos.map((v) => videoSchema(v, site.url))]}>
   <!-- 1. Hero -->
   <section class="hero on-night has-net">
     <CareerField />
@@ -412,6 +414,17 @@ const shortlist = [
           ))
         }
       </ol>
+    </div>
+  </section>
+
+  <!-- 9b. Questions -->
+  <section class="section faqs" id="questions">
+    <div class="wrap split">
+      <div class="split__head">
+        <h2 data-reveal="mask">Questions about LucidAccuracy</h2>
+        <p class="lead" data-reveal style="--i:1">Short answers to what people ask us most.</p>
+      </div>
+      <div data-reveal><Faq items={homeFaqs} /></div>
     </div>
   </section>
 

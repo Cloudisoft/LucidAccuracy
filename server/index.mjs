@@ -108,6 +108,21 @@ app.disable('x-powered-by');
 app.set('trust proxy', true);
 app.use(compression());
 
+// Old URLs from the previous website: one permanent redirect straight to the new page.
+const REDIRECTS = JSON.parse(readFileSync(join(root, 'src/data/redirects.json'), 'utf8'));
+app.use((req, res, next) => {
+  const path = req.path.length > 1 ? req.path.replace(/\/+$/, '') : req.path;
+  const to = REDIRECTS[path];
+  if (to && to !== req.path) return res.redirect(301, to);
+  next();
+});
+
+// One canonical host: www.lucidaccuracy.com -> lucidaccuracy.com.
+app.use((req, res, next) => {
+  if (req.hostname === 'www.lucidaccuracy.com') return res.redirect(301, `https://lucidaccuracy.com${req.originalUrl}`);
+  next();
+});
+
 app.post('/api/contact', express.json({ limit: '20kb' }), express.urlencoded({ extended: false, limit: '20kb' }), async (req, res) => {
   const body = req.body || {};
   // Honeypot: real visitors never see or fill this field.

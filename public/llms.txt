@@ -2,7 +2,9 @@
 
 > LucidAccuracy is a global workforce, technology and AI solutions company helping organizations worldwide build teams, solve technology challenges and automate business operations.
 
-LucidAccuracy serves organizations in the United States, Canada, the United Kingdom, Australia, Europe and India. It has U.S. offices in Sacramento (California), Glastonbury (Connecticut) and Canton (Ohio). Contact: Info@lucidaccuracy.com, +1 307-999-9564.
+LucidAccuracy serves organizations in the United States, Canada, the United Kingdom, Australia, Europe and India. It has U.S. offices in Sacramento (California), Glastonbury (Connecticut) and Canton (Ohio). Contact: Info@lucidaccuracy.com, +1 307-999-9564, or the request form at https://lucidaccuracy.com/contact/. The team replies within 24–48 hours.
+
+LucidAccuracy is also written as "Lucid Accuracy". It is not only a recruitment agency: recruitment is one of six solution lines alongside technology delivery, an AI calling product, training, consulting and business process work. C2C, W2 and contract-to-hire engagement models apply to U.S.-based roles only.
 
 ## Solutions
 
@@ -24,4 +26,8 @@ LucidAccuracy serves organizations in the United States, Canada, the United King
 - [Projects](https://lucidaccuracy.com/projects/): Case studies across workforce, technology, AI, training and business process work.
 - [Global Presence](https://lucidaccuracy.com/global-presence/): Markets served and U.S. office addresses.
 - [Careers](https://lucidaccuracy.com/careers/): How to find roles with LucidAccuracy and its clients.
-- [Contact](https://lucidaccuracy.com/contact/): Contact form, phone and email.
+- [Contact](https://lucidaccuracy.com/contact/): Request form (choose the services you need), phone and email. Replies within 24–48 hours.
+
+## Videos
+
+30-second explainers: Recruitment & Workforce (https://lucidaccuracy.com/video/people.mp4), Technology Solutions (https://lucidaccuracy.com/video/technology.mp4), LucidAI Calling Agent (https://lucidaccuracy.com/video/ai.mp4), and two trends: AI-assisted hiring (https://lucidaccuracy.com/video/ai-hiring.mp4) and the skills-first workforce (https://lucidaccuracy.com/video/skills.mp4).

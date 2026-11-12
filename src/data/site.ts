@@ -484,3 +484,35 @@ export const nav = [
   { label: 'Global Presence', href: '/global-presence/' },
   { label: 'Careers', href: '/careers/' },
 ];
+
+// Homepage questions, written so answer engines can quote them directly.
+export const homeFaqs = [
+  {
+    q: 'What is LucidAccuracy?',
+    a: 'LucidAccuracy (Lucid Accuracy) is a global workforce, technology and AI solutions company. It helps organizations build teams through recruitment and workforce solutions, deliver technology projects, and automate business phone calls with its own product, the LucidAI Calling Agent. It also provides training, consulting and business process solutions.',
+  },
+  {
+    q: 'Which countries does LucidAccuracy serve?',
+    a: 'LucidAccuracy serves organizations and professionals in the United States, Canada, the United Kingdom, Australia, Europe and India. Its offices are in the United States: Sacramento, California; Glastonbury, Connecticut; and Canton, Ohio.',
+  },
+  {
+    q: 'What services does LucidAccuracy offer?',
+    a: 'LucidAccuracy offers six solution lines: Recruitment & Workforce Solutions, Technology Solutions (software, cloud, data, AI and cybersecurity), the LucidAI Calling Agent, Training & Professional Development, Consulting & Professional Services, and Business Process Solutions.',
+  },
+  {
+    q: 'Is LucidAccuracy only a recruitment agency?',
+    a: 'No. Recruitment is one of LucidAccuracy’s main businesses, alongside technology delivery by its own engineers, AI products, corporate training, consulting and back-office operations.',
+  },
+  {
+    q: 'What is the LucidAI Calling Agent?',
+    a: 'The LucidAI Calling Agent is an AI voice agent that answers and places business phone calls. It qualifies leads, books appointments, answers common questions, follows up with prospects and reports the outcome of every call, 24 hours a day.',
+  },
+  {
+    q: 'Which industries does LucidAccuracy recruit for?',
+    a: 'LucidAccuracy works across eleven industries: technology and IT, healthcare, engineering, finance and accounting, pharmaceutical and life sciences, manufacturing, logistics and supply chain, telecommunications, retail and e-commerce, energy, and business and professional services.',
+  },
+  {
+    q: 'How do I contact LucidAccuracy?',
+    a: 'Send a request through the contact form at lucidaccuracy.com/contact, email Info@lucidaccuracy.com or call +1 307-999-9564. Someone from the team will contact you within 24–48 hours.',
+  },
+];
