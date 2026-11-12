@@ -119,6 +119,7 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
     height: 100%;
   }
   .header__logo {
+    flex: none;
     margin-right: auto;
     display: flex;
     align-items: center;
@@ -221,6 +222,8 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
   }
   .theme {
     position: relative;
+    flex: none;
+    aspect-ratio: 1;
     display: grid;
     place-items: center;
     width: 44px;
@@ -257,6 +260,7 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
     opacity: 1;
   }
   .burger {
+    flex: none;
     display: none;
     width: 44px;
     height: 44px;
@@ -323,9 +327,23 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
     color: var(--on-night-2);
     border-left: 1px solid var(--night-line);
   }
+  @media (min-width: 1240px) and (max-width: 1399px) {
+    .header__in {
+      gap: 12px;
+    }
+    .nav__link {
+      padding: 12px 8px;
+      font-size: 0.9063rem;
+    }
+    .nav__link::after {
+      left: 8px;
+      right: 8px;
+    }
+  }
   @media (max-width: 1239px) {
     .nav,
     .header__cta {
+    flex: none;
       display: none;
     }
     .burger {

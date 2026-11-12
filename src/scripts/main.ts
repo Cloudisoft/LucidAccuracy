@@ -2,9 +2,7 @@
 // client-side page transitions, and is torn down through one AbortController.
 
 import Lenis from 'lenis';
-import { initCounters, initProgress } from './effects';
-
-
+import { initCounters, initProgress, initButtons } from './effects';
 
 let teardown: AbortController | null = null;
 
@@ -23,6 +21,22 @@ function initSmoothScroll(signal: AbortSignal) {
     lenis.raf(time);
     id = requestAnimationFrame(raf);
   });
+
+  // Arriving from another page with a #section link: start at the top and glide down.
+  const target = location.hash.length > 1 ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null;
+  if (target) {
+    window.scrollTo(0, 0);
+    setTimeout(() => lenis.scrollTo(target, { offset: -88, duration: 1.6 }), 450);
+  }
+
+  // Back-to-top button.
+  const top = document.querySelector<HTMLButtonElement>('[data-to-top]');
+  if (top) {
+    const toggle = () => top.classList.toggle('is-visible', scrollY > innerHeight * 1.2);
+    toggle();
+    window.addEventListener('scroll', toggle, { passive: true, signal });
+    top.addEventListener('click', () => lenis.scrollTo(0, { duration: 1.6 }), { signal });
+  }
   // The open mobile menu and the call transcript scroll on their own.
   const menuWatcher = new MutationObserver(() =>
     document.documentElement.classList.contains('menu-open') ? lenis.stop() : lenis.start(),
@@ -776,6 +790,7 @@ function init() {
   initContactForm(signal);
   initGlobe(signal);
   initCounters(signal);
+  initButtons(signal);
   initProgress(signal);
 }
 

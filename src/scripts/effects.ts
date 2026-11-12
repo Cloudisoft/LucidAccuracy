@@ -39,3 +39,40 @@ export function initProgress(signal: AbortSignal) {
   window.addEventListener('scroll', update, { passive: true, signal });
   window.addEventListener('resize', update, { passive: true, signal });
 }
+
+// Buttons: a gentle magnetic pull towards the cursor (mouse only) and a ripple
+// from the exact point that was pressed.
+export function initButtons(signal: AbortSignal) {
+  const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  document.querySelectorAll<HTMLElement>('.btn').forEach((btn) => {
+    if (fine) {
+      btn.addEventListener(
+        'pointermove',
+        (e) => {
+          const r = btn.getBoundingClientRect();
+          const x = (e.clientX - r.left - r.width / 2) / (r.width / 2);
+          const y = (e.clientY - r.top - r.height / 2) / (r.height / 2);
+          btn.style.setProperty('--mx', `${(x * 6).toFixed(1)}px`);
+          btn.style.setProperty('--my', `${(y * 5).toFixed(1)}px`);
+        },
+        { signal },
+      );
+      btn.addEventListener('pointerleave', () => btn.style.removeProperty('--mx') || btn.style.removeProperty('--my'), { signal });
+    }
+    btn.addEventListener(
+      'pointerdown',
+      (e) => {
+        const r = btn.getBoundingClientRect();
+        const dot = document.createElement('span');
+        dot.className = 'btn__ripple';
+        const size = Math.max(r.width, r.height) * 2.2;
+        dot.style.width = dot.style.height = `${size}px`;
+        dot.style.left = `${e.clientX - r.left - size / 2}px`;
+        dot.style.top = `${e.clientY - r.top - size / 2}px`;
+        btn.append(dot);
+        dot.addEventListener('animationend', () => dot.remove());
+      },
+      { signal },
+    );
+  });
+}
