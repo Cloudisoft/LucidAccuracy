@@ -1,0 +1,306 @@
+---
+import { nav } from '../data/site';
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href || (href !== '/' && path.startsWith(href));
+---
+
+<header class="header" data-header>
+  <div class="wrap header__in">
+    <a href="/" class="header__logo" aria-label="LucidAccuracy home"><Logo /></a>
+
+    <nav class="nav" aria-label="Main">
+      <ul class="nav__list">
+        {
+          nav.map((item) =>
+            item.children ? (
+              <li class="nav__item nav__item--has" data-dropdown>
+                <a href={item.href} class="nav__link" aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                  {item.label}
+                </a>
+                <button class="nav__toggle" aria-expanded="false" aria-label={`Show ${item.label} menu`} data-dropdown-toggle>
+                  <Icon name="ChevronDown" size={15} />
+                </button>
+                <div class="drop">
+                  <ul>
+                    {item.children.map((c) => (
+                      <li>
+                        <a href={c.href} class="drop__link">
+                          <strong>{c.label}</strong>
+                          <span>{c.text}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </li>
+            ) : (
+              <li class="nav__item">
+                <a href={item.href} class="nav__link" aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ),
+          )
+        }
+      </ul>
+    </nav>
+
+    <a href="/contact/" class="btn btn--amber btn--sm header__cta">Talk to Our Team</a>
+
+    <button class="burger" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
+      <span class="sr-only">Menu</span>
+      <span class="burger__bars" aria-hidden="true"></span>
+    </button>
+  </div>
+</header>
+
+<div class="mobile" id="mobile-menu" data-menu data-lenis-prevent hidden>
+  <nav class="wrap mobile__in" aria-label="Mobile">
+    <ul class="mobile__list">
+      <li><a href="/">Home</a></li>
+      {
+        nav.map((item) => (
+          <li>
+            <a href={item.href}>{item.label}</a>
+            {item.children && (
+              <ul class="mobile__sub">
+                {item.children.map((c) => (
+                  <li>
+                    <a href={c.href}>{c.label}</a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))
+      }
+      <li><a href="/ai-calling-agent/">LucidAI Calling Agent</a></li>
+    </ul>
+    <a href="/contact/" class="btn btn--amber">Talk to Our Team</a>
+  </nav>
+</div>
+
+<style>
+  .header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    height: var(--header-h);
+    color: var(--on-night);
+    --logo-accent: var(--teal-bright);
+    transition:
+      background-color 0.4s var(--ease),
+      color 0.3s,
+      box-shadow 0.4s,
+      transform 0.5s var(--ease);
+  }
+  .header.is-stuck {
+    background: hsl(45 30% 98% / 0.86);
+    backdrop-filter: saturate(1.4) blur(14px);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    color: var(--ink);
+    --logo-accent: var(--teal);
+    box-shadow: 0 1px 0 var(--line);
+  }
+  .header.is-hidden {
+    transform: translateY(-100%);
+  }
+  .header__in {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    height: 100%;
+  }
+  .header__logo {
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .nav__list {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .nav__item {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .nav__link {
+    position: relative;
+    display: block;
+    padding: 12px 11px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .nav__link::after {
+    content: '';
+    position: absolute;
+    left: 11px;
+    right: 11px;
+    bottom: 7px;
+    height: 1.5px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s var(--ease);
+  }
+  .nav__link:hover::after,
+  .nav__link[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+  .nav__toggle {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 44px;
+    margin-left: -8px;
+    transition: transform 0.3s var(--ease);
+  }
+  .nav__item--has:hover .nav__toggle,
+  .nav__item--has.is-open .nav__toggle {
+    transform: rotate(180deg);
+  }
+  .drop {
+    position: absolute;
+    top: 100%;
+    left: -18px;
+    width: 420px;
+    padding-top: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition:
+      opacity 0.25s,
+      transform 0.4s var(--ease),
+      visibility 0.25s;
+  }
+  .nav__item--has:hover .drop,
+  .nav__item--has:focus-within .drop,
+  .nav__item--has.is-open .drop {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  .drop ul {
+    padding: 8px;
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: var(--r);
+    box-shadow:
+      0 0 0 1px var(--line),
+      var(--shadow-2);
+  }
+  .drop__link {
+    display: grid;
+    gap: 2px;
+    padding: 12px 14px;
+    border-radius: 9px;
+    transition: background-color 0.2s;
+  }
+  .drop__link:hover {
+    background: var(--teal-tint);
+  }
+  .drop__link strong {
+    font-weight: 600;
+    font-size: 0.9688rem;
+  }
+  .drop__link span {
+    font-size: 0.8438rem;
+    line-height: 1.45;
+    color: var(--ink-2);
+  }
+  .burger {
+    display: none;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+  }
+  .burger__bars,
+  .burger__bars::before {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    transition: transform 0.4s var(--ease);
+  }
+  .burger__bars {
+    transform: translateY(-4px);
+  }
+  .burger__bars::before {
+    content: '';
+    transform: translateY(8px);
+  }
+  .burger[aria-expanded='true'] .burger__bars {
+    transform: rotate(45deg);
+  }
+  .burger[aria-expanded='true'] .burger__bars::before {
+    transform: rotate(-90deg);
+  }
+  .mobile {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: var(--night);
+    color: var(--on-night);
+    padding-top: calc(var(--header-h) + 12px);
+    overflow-y: auto;
+    opacity: 0;
+    transition: opacity 0.35s;
+  }
+  .mobile.is-open {
+    opacity: 1;
+  }
+  .mobile__in {
+    display: grid;
+    gap: 28px;
+    padding-bottom: 48px;
+  }
+  .mobile__list > li {
+    border-bottom: 1px solid var(--night-line);
+  }
+  .mobile__list > li > a {
+    display: block;
+    padding: 14px 0;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .mobile__sub {
+    padding-bottom: 12px;
+  }
+  .mobile__sub a {
+    display: block;
+    padding: 11px 0 11px 16px;
+    color: var(--on-night-2);
+    border-left: 1px solid var(--night-line);
+  }
+  @media (max-width: 1239px) {
+    .nav,
+    .header__cta {
+      display: none;
+    }
+    .burger {
+      display: grid;
+    }
+  }
+  /* While the mobile menu is open the bar must read on the dark overlay. */
+  :global(html.menu-open) .header {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    color: var(--on-night);
+    --logo-accent: var(--teal-bright);
+    box-shadow: none;
+    transform: none;
+  }
+  :global(html.menu-open) {
+    overflow: hidden;
+  }
+</style>

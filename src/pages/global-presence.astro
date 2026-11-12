@@ -1,0 +1,80 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import WorldMap from '../components/WorldMap.astro';
+import Cta from '../components/Cta.astro';
+import { locations, site } from '../data/site';
+const crumbs = [{ name: 'Global Presence', href: '/global-presence/' }];
+const mapEmbed = (l: (typeof locations)[number]) =>
+  `https://www.google.com/maps?q=${encodeURIComponent(`${l.street}, ${l.locality}, ${l.region} ${l.postal}`)}&z=14&output=embed`;
+const mapLink = (l: (typeof locations)[number]) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${l.street}, ${l.locality}, ${l.region} ${l.postal}`)}`;
+---
+
+<Base
+  title="Global Presence & Office Locations | LucidAccuracy"
+  description="LucidAccuracy serves organizations in the United States, Canada, United Kingdom, Australia, Europe and India, with U.S. offices in California, Connecticut and Ohio."
+  og="global-presence"
+  {crumbs}
+>
+  <PageHero
+    title="Global Reach. Local Expertise."
+    lead="LucidAccuracy supports organizations and professionals across major international markets, combining global capabilities with an understanding of regional workforce and business requirements."
+    {crumbs}
+  >
+    <a href="#locations" class="btn btn--amber">See Office Locations <Icon name="ArrowRight" /></a>
+  </PageHero>
+
+  <section class="section" id="markets">
+    <div class="wrap">
+      <div class="head head--split">
+        <h2 data-reveal="mask">Six markets we serve</h2>
+        <p data-reveal style="--i:1">
+          These are the countries and regions where we support clients and professionals. Our physical offices are
+          listed separately below.
+        </p>
+      </div>
+      <WorldMap />
+    </div>
+  </section>
+
+  <section class="section section--sand" id="locations">
+    <div class="wrap">
+      <div class="head head--split">
+        <h2 data-reveal="mask">U.S. office locations</h2>
+        <p data-reveal style="--i:1">
+          LucidAccuracy offices in the United States. Call <a class="link" href={site.phoneHref}>{site.phone}</a> or email{' '}
+          <a class="link" href={`mailto:${site.email}`}>{site.email}</a> to reach any of them.
+        </p>
+      </div>
+      <ul class="offices">
+        {
+          locations.map((l, i) => (
+            <li class="office" data-reveal style={`--i:${i}`}>
+              <div class="office__map">
+                <iframe
+                  src={mapEmbed(l)}
+                  title={`Map showing the LucidAccuracy office at ${l.lines.join(', ')}`}
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  allowfullscreen
+                />
+              </div>
+              <p class="office__kind"><Icon name="MapPin" size={16} /> U.S. office</p>
+              <h3>{l.state}</h3>
+              <address>
+                {l.lines.map((line) => <span>{line}</span>)}
+              </address>
+              <a class="arrow-link" href={mapLink(l)} target="_blank" rel="noopener">
+                Get directions <Icon name="ArrowUpRight" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <Cta title="Work with us in your market" />
+</Base>

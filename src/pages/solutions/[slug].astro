@@ -1,0 +1,230 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import Cta from '../../components/Cta.astro';
+import Faq from '../../components/Faq.astro';
+import { solutions, industries, markets, techCapabilities } from '../../data/site';
+import { serviceSchema, faqSchema } from '../../data/schema';
+
+export function getStaticPaths() {
+  return solutions.map((s) => ({ params: { slug: s.slug }, props: { s } }));
+}
+const { s } = Astro.props;
+const crumbs = [
+  { name: 'Solutions', href: '/solutions/' },
+  { name: s.nav, href: `/solutions/${s.slug}/` },
+];
+const others = solutions.filter((o) => o.slug !== s.slug);
+const isRecruitment = s.slug === 'recruitment-workforce';
+const isTech = s.slug === 'technology';
+const usModels = [
+  { name: 'Corp-to-Corp (C2C)', text: 'A business-to-business contract engagement for specialized project work.' },
+  { name: 'W2 Employment', text: 'Full-time and part-time placements with payroll administration handled for you.' },
+  { name: 'Contract-to-Hire (C2H)', text: 'Start on contract and convert to a permanent hire once the fit is proven.' },
+];
+---
+
+<Base
+  title={s.metaTitle}
+  description={s.metaDescription}
+  og={s.slug}
+  {crumbs}
+  schema={[
+    serviceSchema(
+      s.title,
+      s.metaDescription,
+      `/solutions/${s.slug}/`,
+      s.services.map((x) => x.name),
+    ),
+    faqSchema(s.faqs),
+  ]}
+>
+  <PageHero title={s.title} lead={s.summary} {crumbs}>
+    <a href={`/contact/?topic=${encodeURIComponent(s.nav)}`} class="btn btn--amber">Talk to Our Team <Icon name="ArrowRight" /></a>
+    <a href="#services" class="btn btn--ghost">See the services</a>
+  </PageHero>
+
+  <section class="section" id="services">
+    <div class="wrap split">
+      <div class="split__head">
+        <h2 data-reveal="mask">What this service covers</h2>
+        <p class="lead" data-reveal style="--i:1">{s.lead}</p>
+      </div>
+      <ul class="rows">
+        {
+          s.services.map((sv, i) => (
+            <li data-reveal style={`--i:${i % 4}`}>
+              <h3>{sv.name}</h3>
+              <p>{sv.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--night">
+    <div class="wrap">
+      <div class="head">
+        <h2 data-reveal="mask">How an engagement runs</h2>
+      </div>
+      <ol class="steps">
+        {
+          s.approach.map((a, i) => (
+            <li data-reveal style={`--i:${i}`}>
+              <h3>{a.name}</h3>
+              <p>{a.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  {
+    isRecruitment && (
+      <>
+        <section class="section">
+          <div class="wrap">
+            <div class="head head--split">
+              <h2 data-reveal="mask">Industries we recruit for</h2>
+              <p data-reveal style="--i:1">
+                Recruitment is one of several LucidAccuracy businesses, and it reaches well beyond technology roles.
+              </p>
+            </div>
+            <ul class="chips chips--lg" data-reveal>
+              {industries.map((i) => (
+                <li>
+                  <a class="chip" href={`/industries/#${i.slug}`}>
+                    <Icon name={i.icon} size={16} /> {i.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p class="markets" data-reveal>
+              Hiring support in {markets.map((m) => m.name).join(', ').replace(/, ([^,]*)$/, ' and $1')}.{' '}
+              <a class="link" href="/global-presence/">See our global presence</a>
+            </p>
+          </div>
+        </section>
+
+        <section class="section section--sand" id="us-staffing">
+          <div class="wrap split">
+            <div class="split__head">
+              <img src="/flags/us.svg" alt="" width="40" height="30" class="flag" data-reveal />
+              <h2 data-reveal="mask">Engagement models for U.S. hiring</h2>
+              <p class="lead" data-reveal style="--i:1">
+                For roles based in the United States, we support the engagement models U.S. employers and contractors
+                use. Terms in other markets follow local practice.
+              </p>
+            </div>
+            <ul class="rows">
+              {usModels.map((m, i) => (
+                <li data-reveal style={`--i:${i}`}>
+                  <h3>{m.name}</h3>
+                  <p>{m.text}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      </>
+    )
+  }
+
+  {
+    isTech && (
+      <section class="section">
+        <div class="wrap">
+          <div class="head head--split">
+            <h2 data-reveal="mask">Seven capabilities, one delivery team</h2>
+            <p data-reveal style="--i:1">
+              Most projects draw on more than one. Your project lead brings in the right specialists as the work needs them.
+            </p>
+          </div>
+          <ul class="cells">
+            {techCapabilities.map((t, i) => (
+              <li data-reveal style={`--i:${i % 4}`}>
+                <span class="icon-tile">
+                  <Icon name={t.icon} />
+                </span>
+                <h3>{t.name}</h3>
+                <p>{t.text}</p>
+              </li>
+            ))}
+          </ul>
+          <p class="markets" data-reveal>
+            Looking for AI on the phone?{' '}
+            <a class="link" href="/ai-calling-agent/">See the LucidAI Calling Agent</a>
+          </p>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section section--sand">
+    <div class="wrap split">
+      <div class="split__head">
+        <h2 data-reveal="mask">Questions about {s.nav.toLowerCase().replace('& ', 'and ')}</h2>
+      </div>
+      <div data-reveal><Faq items={s.faqs} /></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="head">
+        <h2 data-reveal="mask">Other LucidAccuracy solutions</h2>
+      </div>
+      <ul class="panels">
+        {
+          others.map((o, i) => (
+            <li data-reveal style={`--i:${i}`}>
+              <a class="panel" href={`/solutions/${o.slug}/`}>
+                <span class="icon-tile">
+                  <Icon name={o.icon} />
+                </span>
+                <h3>{o.title}</h3>
+                <p>{o.lead}</p>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <Cta />
+</Base>
+
+<style>
+  .chips--lg {
+    gap: 10px;
+  }
+  .chips--lg .chip {
+    min-height: 44px;
+    padding: 8px 18px;
+    font-size: 1rem;
+    transition:
+      box-shadow 0.3s,
+      transform 0.4s var(--ease);
+  }
+  .chips--lg .chip :global(svg) {
+    color: var(--teal-deep);
+  }
+  .chips--lg .chip:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 0 0 1px var(--teal);
+  }
+  .markets {
+    margin-top: 32px;
+    color: var(--ink-2);
+    max-width: 72ch;
+  }
+  .flag {
+    border-radius: 5px;
+    margin-bottom: 24px;
+    box-shadow: 0 0 0 1px hsl(210 25% 14% / 0.12);
+  }
+</style>

@@ -1,0 +1,148 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import Cta from '../../components/Cta.astro';
+import { solutions, agent } from '../../data/site';
+import { serviceSchema } from '../../data/schema';
+const crumbs = [{ name: 'Solutions', href: '/solutions/' }];
+const title = 'Workforce, Technology & Business Solutions | LucidAccuracy';
+const description =
+  'Explore LucidAccuracy solutions: recruitment and workforce, technology, AI products, training, consulting and business process services for organizations worldwide.';
+---
+
+<Base
+  {title}
+  {description}
+  og="solutions"
+  {crumbs}
+  schema={[serviceSchema('LucidAccuracy Solutions', description, '/solutions/', [...solutions.map((s) => s.title), agent.name])]}
+>
+  <PageHero
+    title="Solutions for hiring, building and running a business"
+    lead="Six solution lines under one roof. Use one on its own, or combine them when a project needs people, technology and operations together."
+    {crumbs}
+  >
+    <a href="/contact/" class="btn btn--amber">Talk to Our Team <Icon name="ArrowRight" /></a>
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap">
+      <ul class="sol">
+        {
+          solutions.map((s, i) => (
+            <li data-reveal style={`--i:${i % 2}`}>
+              <a href={`/solutions/${s.slug}/`} class="sol__item">
+                <span class="icon-tile">
+                  <Icon name={s.icon} />
+                </span>
+                <div class="sol__main">
+                  <h2>{s.title}</h2>
+                  <p>{s.summary}</p>
+                </div>
+                <ul class="sol__list">
+                  {s.services.slice(0, 5).map((sv) => <li>{sv.name}</li>)}
+                </ul>
+                <Icon name="ArrowUpRight" size={26} class="sol__arrow" />
+              </a>
+            </li>
+          ))
+        }
+        <li data-reveal>
+          <a href="/ai-calling-agent/" class="sol__item sol__item--dark">
+            <span class="icon-tile"><Icon name="AudioLines" /></span>
+            <div class="sol__main">
+              <h2>AI Products & Business Automation</h2>
+              <p>{agent.name} automates inbound and outbound phone conversations: lead qualification, scheduling and follow-ups, 24/7.</p>
+            </div>
+            <ul class="sol__list">
+              {agent.capabilities.slice(0, 5).map((c) => <li>{c.name}</li>)}
+            </ul>
+            <Icon name="ArrowUpRight" size={26} class="sol__arrow" />
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <Cta title="Need a combined solution?" text="Tell us the outcome you need. We will put together the right mix of talent, technology and operations support." />
+</Base>
+
+<style>
+  .sol {
+    display: grid;
+    gap: 14px;
+  }
+  .sol__item {
+    position: relative;
+    display: grid;
+    gap: 20px 40px;
+    padding: clamp(24px, 3.4vw, 44px);
+    border-radius: var(--r-lg);
+    background: var(--paper);
+    box-shadow: inset 0 0 0 1px var(--line);
+    transition:
+      transform 0.5s var(--ease),
+      box-shadow 0.5s var(--ease);
+  }
+  .sol__item:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 0 0 1px var(--teal),
+      var(--shadow-2);
+  }
+  .sol__item--dark {
+    background: var(--night);
+    color: var(--on-night);
+    box-shadow: none;
+  }
+  .sol__item--dark .icon-tile {
+    background: hsl(166 58% 52% / 0.14);
+    color: var(--teal-bright);
+  }
+  .sol h2 {
+    font-size: clamp(1.5rem, 2.4vw, 2.125rem);
+    margin-bottom: 12px;
+  }
+  .sol__main p {
+    color: var(--ink-2);
+    max-width: 56ch;
+  }
+  .sol__item--dark .sol__main p,
+  .sol__item--dark .sol__list {
+    color: var(--on-night-2);
+  }
+  .sol__list {
+    display: grid;
+    gap: 6px;
+    align-content: start;
+    font-size: 0.9688rem;
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+  .sol__list li::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 12px;
+    border-radius: 50%;
+    background: var(--teal);
+    vertical-align: middle;
+  }
+  .sol :global(.sol__arrow) {
+    position: absolute;
+    top: clamp(24px, 3.4vw, 44px);
+    right: clamp(24px, 3.4vw, 44px);
+    color: var(--teal);
+    transition: transform 0.5s var(--ease);
+  }
+  .sol__item:hover :global(.sol__arrow) {
+    transform: translate(4px, -4px);
+  }
+  @media (min-width: 900px) {
+    .sol__item {
+      grid-template-columns: 44px minmax(0, 1.3fr) minmax(0, 0.8fr) 40px;
+    }
+  }
+</style>

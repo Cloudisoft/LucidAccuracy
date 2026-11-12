@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { site } from '../data/site';
+const crumbs = [{ name: 'Terms of Use', href: '/terms/' }];
+---
+
+<Base title="Terms of Use | LucidAccuracy" description="The terms that apply to use of the LucidAccuracy website, including content, intellectual property and liability." og="default" {crumbs}>
+  <PageHero title="Terms of Use" lead="Last updated November 2026" {crumbs} />
+  <section class="section">
+    <div class="wrap prose">
+      <p>These terms apply to your use of lucidaccuracy.com. By using the website you agree to them.</p>
+      <h2>Website content</h2>
+      <p>
+        The content on this website is provided for general information about LucidAccuracy and its services. It is not
+        an offer or a contract. Services are provided under separate written agreements.
+      </p>
+      <h2>Intellectual property</h2>
+      <p>
+        The LucidAccuracy name, logo, text, graphics and software on this website belong to LucidAccuracy or its
+        licensors and may not be copied or reused without permission.
+      </p>
+      <h2>Acceptable use</h2>
+      <p>
+        You agree not to misuse the website, attempt to gain unauthorized access to it, or use it to send unlawful or
+        harmful material.
+      </p>
+      <h2>Product demonstrations</h2>
+      <p>
+        Demonstrations of the LucidAI Calling Agent on this website are scripted illustrations. Available features and
+        integrations are confirmed in writing for each engagement.
+      </p>
+      <h2>Liability</h2>
+      <p>
+        We work to keep the website accurate and available but provide it "as is", without warranties. To the extent the
+        law allows, LucidAccuracy is not liable for loss arising from use of the website.
+      </p>
+      <h2>Links to other websites</h2>
+      <p>This website may link to third-party websites. We are not responsible for their content or practices.</p>
+      <h2>Contact</h2>
+      <p>Questions about these terms can be sent to <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,312 @@
+---
+import { existsSync } from 'node:fs';
+import { callScenarios } from '../data/site';
+import Icon from './Icon.astro';
+interface Props {
+  tabs?: boolean;
+}
+const { tabs = false } = Astro.props;
+// Recorded voice clips live in public/audio/calls as <scenario>-<line>.mp3.
+// A missing clip falls back to the browser's speech voice.
+const scenarios = (tabs ? callScenarios : callScenarios.slice(0, 1)).map((s) => ({
+  ...s,
+  audio: s.lines.map((_, i) => (existsSync(`public/audio/calls/${s.key}-${i}.mp3`) ? `/audio/calls/${s.key}-${i}.mp3` : null)),
+}));
+const bars = Array.from({ length: 34 }, (_, i) => ({
+  d: (0.7 + ((i * 37) % 11) / 14).toFixed(2),
+  o: (((i * 53) % 17) / -10).toFixed(2),
+  h: 28 + ((i * 29) % 13) * 5.5,
+}));
+---
+
+<div class="call" data-call data-state="idle">
+  <script type="application/json" data-call-data set:html={JSON.stringify(scenarios)} />
+
+  <div class="call__bar">
+    <span class="call__live" aria-hidden="true"></span>
+    <span class="call__title">LucidAI Calling Agent</span>
+    <span class="call__timer" data-call-timer>00:00</span>
+  </div>
+
+  {
+    tabs && (
+      <div class="call__tabs" role="group" aria-label="Demonstration call">
+        {scenarios.map((s, i) => (
+          <button data-call-tab={s.key} aria-pressed={i === 0 ? 'true' : 'false'}>
+            {s.label}
+          </button>
+        ))}
+      </div>
+    )
+  }
+
+  <div class="call__meta">
+    <div>
+      <strong data-call-business>{scenarios[0].business}</strong>
+      <span data-call-task>{scenarios[0].task}</span>
+    </div>
+    <div class="call__buttons">
+    <button class="call__voice" data-call-voice aria-pressed="false">
+      <Icon name="Volume2" size={16} />
+      <span data-call-voice-label>Play with voice</span>
+    </button>
+    <button class="call__control" data-call-control data-mode="play">
+      <span class="call__icon call__icon--play"><Icon name="Play" size={16} /></span>
+      <span class="call__icon call__icon--pause"><Icon name="Pause" size={16} /></span>
+      <span class="call__icon call__icon--replay"><Icon name="RotateCcw" size={16} /></span>
+      <span data-call-control-label>Play</span>
+    </button>
+    </div>
+  </div>
+
+  <div class="call__wave" aria-hidden="true">
+    {bars.map((b) => <i style={`--d:${b.d}s;--o:${b.o}s;--h:${b.h}%`} />)}
+  </div>
+
+  <div class="call__log" data-call-log data-lenis-prevent aria-live="off">
+    {scenarios[0].lines.map(([who, text]) => <p class={`call__line call__line--${who}`}>{text}</p>)}
+  </div>
+
+  <div class="call__foot">
+    <p class="call__outcome" data-call-outcome hidden>
+      <Icon name="Check" size={16} />
+      <span data-call-outcome-text>{scenarios[0].outcome}</span>
+    </p>
+    <p class="call__note">Demonstration call with AI-generated voices. Businesses and people are fictional.</p>
+  </div>
+</div>
+
+<style>
+  .call {
+    --agent: var(--teal-bright);
+    --caller: var(--amber);
+    display: grid;
+    grid-template-rows: auto auto auto auto 1fr auto;
+    width: 100%;
+    height: 580px;
+    max-height: 82vh;
+    background: var(--night-2);
+    color: var(--on-night);
+    border-radius: var(--r-lg);
+    box-shadow:
+      inset 0 0 0 1px var(--night-line),
+      0 40px 80px -40px hsl(188 60% 3% / 0.9);
+    overflow: hidden;
+    font-size: 0.9375rem;
+  }
+  .call__bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--night-line);
+    font-weight: 600;
+  }
+  .call__live {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--on-night-2);
+  }
+  .call[data-state='agent'] .call__live,
+  .call[data-state='caller'] .call__live {
+    background: hsl(4 80% 62%);
+    box-shadow: 0 0 0 4px hsl(4 80% 62% / 0.2);
+  }
+  .call__timer {
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+    color: var(--on-night-2);
+    font-weight: 500;
+  }
+  .call__tabs {
+    display: flex;
+    gap: 6px;
+    padding: 12px 14px 0;
+  }
+  .call__tabs button {
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 999px;
+    font-weight: 500;
+    color: var(--on-night-2);
+    transition:
+      background-color 0.25s,
+      color 0.25s;
+  }
+  .call__tabs button:hover {
+    color: var(--on-night);
+  }
+  .call__tabs button[aria-pressed='true'] {
+    background: var(--on-night);
+    color: var(--night);
+  }
+  .call__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px 6px;
+  }
+  .call__meta strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.1875rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .call__meta > div:first-child span {
+    color: var(--on-night-2);
+  }
+  .call__meta {
+    flex-wrap: wrap;
+  }
+  .call__buttons {
+    display: flex;
+    gap: 8px;
+  }
+  .call__voice {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 999px;
+    background: var(--amber);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    transition:
+      transform 0.3s var(--ease),
+      box-shadow 0.3s;
+  }
+  .call__voice:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px -10px hsl(38 85% 52% / 0.8);
+  }
+  .call__voice:active {
+    transform: scale(0.97);
+  }
+  .call__voice[aria-pressed='true'] {
+    background: var(--teal-bright);
+  }
+  .call__control {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1px var(--night-line);
+    font-weight: 600;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    transition:
+      background-color 0.25s,
+      transform 0.3s var(--ease);
+  }
+  .call__control:hover {
+    background: hsl(176 22% 100% / 0.07);
+  }
+  .call__control:active {
+    transform: scale(0.97);
+  }
+  .call__icon {
+    display: none;
+  }
+  .call__control[data-mode='play'] .call__icon--play,
+  .call__control[data-mode='pause'] .call__icon--pause,
+  .call__control[data-mode='replay'] .call__icon--replay {
+    display: block;
+  }
+  .call__wave {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+    padding: 0 20px;
+  }
+  .call__wave i {
+    flex: 0 1 5px;
+    height: var(--h);
+    min-width: 2px;
+    border-radius: 3px;
+    background: hsl(176 22% 100% / 0.16);
+    transform: scaleY(0.14);
+    transition:
+      background-color 0.4s,
+      transform 0.5s var(--ease);
+  }
+  .call[data-state='agent'] .call__wave i,
+  .call[data-state='caller'] .call__wave i {
+    animation: wave var(--d) ease-in-out var(--o) infinite alternate;
+  }
+  .call[data-state='agent'] .call__wave i {
+    background: var(--agent);
+  }
+  .call[data-state='caller'] .call__wave i {
+    background: var(--caller);
+  }
+  @keyframes wave {
+    from {
+      transform: scaleY(0.18);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+  .call__log {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 20px 14px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    mask-image: linear-gradient(transparent, #000 22px);
+  }
+  .call__log :global(.call__line) {
+    max-width: 86%;
+    padding: 9px 14px;
+    border-radius: 16px 16px 16px 4px;
+    background: hsl(166 58% 52% / 0.13);
+    line-height: 1.45;
+  }
+  .call__log :global(.call__line--caller) {
+    align-self: flex-end;
+    border-radius: 16px 16px 4px 16px;
+    background: hsl(38 85% 52% / 0.16);
+  }
+  .call__log :global(.call__line.is-new) {
+    animation: line-in 0.5s var(--ease) both;
+  }
+  @keyframes line-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.97);
+    }
+  }
+  .call__foot {
+    padding: 12px 20px 16px;
+    border-top: 1px solid var(--night-line);
+  }
+  .call__outcome {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px 6px 10px;
+    margin-bottom: 8px;
+    border-radius: 999px;
+    background: var(--teal-bright);
+    color: var(--night);
+    font-weight: 600;
+    animation: line-in 0.6s var(--ease) both;
+  }
+  .call__outcome[hidden] {
+    display: none;
+  }
+  .call__note {
+    font-size: 0.8125rem;
+    color: var(--on-night-2);
+  }
+</style>

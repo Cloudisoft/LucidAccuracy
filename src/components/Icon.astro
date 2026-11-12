@@ -1,0 +1,8 @@
+---
+import * as icons from '@lucide/astro';
+const { name, size = 20, ...rest } = Astro.props;
+const Cmp = (icons as Record<string, any>)[name];
+if (!Cmp) throw new Error(`Unknown icon: ${name}`);
+---
+
+<Cmp size={size} aria-hidden="true" {...rest} />

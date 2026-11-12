@@ -1,0 +1,106 @@
+---
+interface Props {
+  title: string;
+  lead?: string;
+  crumbs?: { name: string; href: string }[];
+}
+const { title, lead, crumbs = [] } = Astro.props;
+---
+
+<section class="phero on-night">
+  <div class="phero__rings" aria-hidden="true"></div>
+  <div class="wrap phero__in">
+    {
+      crumbs.length > 0 && (
+        <nav class="crumbs fade-up" aria-label="Breadcrumb">
+          <ol>
+            <li>
+              <a href="/">Home</a>
+            </li>
+            {crumbs.map((c, i) => (
+              <li>{i === crumbs.length - 1 ? <span aria-current="page">{c.name}</span> : <a href={c.href}>{c.name}</a>}</li>
+            ))}
+          </ol>
+        </nav>
+      )
+    }
+    <h1 class="lines">
+      <span class="line"><span>{title}</span></span>
+    </h1>
+    {lead && <p class="phero__lead fade-up" style="--i:2">{lead}</p>}
+    <div class="actions fade-up" style="--i:3">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .phero {
+    position: relative;
+    overflow: hidden;
+    background: var(--night);
+    color: var(--on-night);
+    padding: calc(var(--header-h) + clamp(56px, 8vw, 112px)) 0 clamp(56px, 7vw, 96px);
+  }
+  .phero__rings {
+    position: absolute;
+    right: -14vw;
+    top: 50%;
+    width: min(900px, 90vw);
+    aspect-ratio: 1;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, transparent 0 34.6%, hsl(166 58% 52% / 0.2) 34.8% 35%, transparent 35.2%),
+      radial-gradient(circle, transparent 0 49.6%, hsl(166 58% 52% / 0.13) 49.8% 50%, transparent 50.2%),
+      radial-gradient(circle, transparent 0 69.6%, hsl(166 58% 52% / 0.08) 69.8% 70%, transparent 70.2%),
+      radial-gradient(circle at 50% 50%, hsl(168 65% 34% / 0.28), transparent 62%);
+    animation: ring-drift 26s ease-in-out infinite alternate;
+  }
+  @keyframes ring-drift {
+    to {
+      transform: translateY(-46%) scale(1.06) rotate(6deg);
+    }
+  }
+  .phero__in {
+    position: relative;
+  }
+  h1 {
+    max-width: 17ch;
+    font-size: clamp(2.5rem, 5vw, 4.25rem);
+  }
+  .phero__lead {
+    margin-top: 24px;
+    max-width: 58ch;
+    font-size: clamp(1.125rem, 1.5vw, 1.3125rem);
+    line-height: 1.55;
+    color: var(--on-night-2);
+  }
+  .actions {
+    margin-top: 32px;
+  }
+  .actions:empty {
+    display: none;
+  }
+  .crumbs {
+    margin-bottom: 24px;
+    font-size: 0.875rem;
+    color: var(--on-night-2);
+  }
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+  }
+  .crumbs li + li::before {
+    content: '/';
+    margin-right: 10px;
+    opacity: 0.5;
+  }
+  .crumbs a {
+    padding-block: 12px;
+  }
+  .crumbs a:hover {
+    color: var(--on-night);
+  }
+</style>

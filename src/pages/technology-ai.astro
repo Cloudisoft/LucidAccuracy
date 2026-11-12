@@ -1,0 +1,138 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Cta from '../components/Cta.astro';
+import { techCapabilities, agent } from '../data/site';
+import { serviceSchema } from '../data/schema';
+const crumbs = [{ name: 'Technology & AI', href: '/technology-ai/' }];
+const description =
+  'LucidAccuracy technology and AI capabilities: software development, cloud, data and analytics, cybersecurity, automation and the LucidAI Calling Agent.';
+const stages = [
+  { name: 'Plan', text: 'Workshops, architecture and a delivery plan with scope both sides can measure.' },
+  { name: 'Build', text: 'Short delivery cycles with working software to review at each milestone.' },
+  { name: 'Secure', text: 'Security review, access control and testing before anything reaches users.' },
+  { name: 'Run', text: 'Monitoring, maintenance and improvement after launch, where applicable.' },
+];
+---
+
+<Base
+  title="Technology & AI Capabilities | LucidAccuracy"
+  {description}
+  og="technology-ai"
+  {crumbs}
+  schema={[serviceSchema('Technology & AI', description, '/technology-ai/', techCapabilities.map((t) => t.name))]}
+>
+  <PageHero
+    title="Technology and AI, delivered by our own engineers"
+    lead="LucidAccuracy builds software, moves systems to the cloud, makes data usable and puts AI to work. We deliver the project, and can staff your team as a separate service."
+    {crumbs}
+  >
+    <a href="/solutions/technology/" class="btn btn--amber">See Technology Solutions <Icon name="ArrowRight" /></a>
+    <a href="/ai-calling-agent/" class="btn btn--ghost">Explore AI Calling Agent</a>
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="head head--split">
+        <h2 data-reveal="mask">Seven technology capabilities</h2>
+        <p data-reveal style="--i:1">From a single application to a full transformation program.</p>
+      </div>
+      <ul class="cells">
+        {
+          techCapabilities.map((t, i) => (
+            <li data-reveal style={`--i:${i % 4}`}>
+              <span class="icon-tile"><Icon name={t.icon} /></span>
+              <h3>{t.name}</h3>
+              <p>{t.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--night">
+    <div class="wrap ai">
+      <div>
+        <h2 data-reveal="mask">AI that handles real conversations</h2>
+        <p class="ai__text" data-reveal style="--i:1">
+          {agent.name} is our own AI voice product. It answers and places calls, qualifies leads, books appointments and
+          reports on every conversation.
+        </p>
+        <div class="actions" data-reveal style="--i:2">
+          <a href="/ai-calling-agent/" class="btn btn--amber">Explore AI Calling Agent <Icon name="ArrowRight" /></a>
+          <a href="/contact/?topic=AI%20Calling%20Agent%20demo" class="btn btn--ghost">Book a Demo</a>
+        </div>
+      </div>
+      <ul class="ai__list">
+        {
+          agent.capabilities.slice(0, 6).map((c, i) => (
+            <li data-reveal style={`--i:${i % 3}`}>
+              <span class="icon-tile"><Icon name={c.icon} /></span>
+              {c.name}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="head">
+        <h2 data-reveal="mask">How technology projects are delivered</h2>
+      </div>
+      <ol class="steps">
+        {
+          stages.map((st, i) => (
+            <li data-reveal style={`--i:${i}`}>
+              <h3>{st.name}</h3>
+              <p>{st.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <Cta title="Have a technology project in mind?" text="Describe the system, the deadline and the constraints. Our technology team will come back with a plan." />
+</Base>
+
+<style>
+  .ai {
+    display: grid;
+    gap: 48px 72px;
+    align-items: center;
+  }
+  .ai__text {
+    margin: 20px 0 30px;
+    max-width: 50ch;
+    font-size: 1.125rem;
+    color: var(--on-night-2);
+  }
+  .ai__list {
+    display: grid;
+    gap: 10px;
+  }
+  .ai__list li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px 12px 12px;
+    border-radius: 16px;
+    background: hsl(176 22% 100% / 0.05);
+    box-shadow: inset 0 0 0 1px var(--night-line);
+    font-weight: 500;
+  }
+  @media (min-width: 640px) {
+    .ai__list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (min-width: 1000px) {
+    .ai {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+</style>

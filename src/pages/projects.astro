@@ -1,0 +1,148 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Cta from '../components/Cta.astro';
+import { projects } from '../data/site';
+const crumbs = [{ name: 'Projects', href: '/projects/' }];
+---
+
+<Base
+  title="Projects & Case Studies | LucidAccuracy"
+  description="Case studies from LucidAccuracy across workforce, technology, AI, training and business process engagements in the United States, Canada, UK, Europe and India."
+  og="projects"
+  {crumbs}
+>
+  <PageHero
+    title="Projects and case studies"
+    lead="How LucidAccuracy teams approach client work across workforce, technology, AI and operations. Client names are withheld where confidentiality applies."
+    {crumbs}
+  />
+
+  <section class="section">
+    <div class="wrap">
+      <ul class="cases">
+        {
+          projects.map((p) => (
+            <li id={p.slug} class="study" data-reveal>
+              <header class="study__head">
+                <p class="study__meta">
+                  <span>{p.pillar}</span>
+                  <span>{p.industry}</span>
+                  <span>{p.market}</span>
+                </p>
+                <h2>{p.title} <span>— {p.market}</span></h2>
+              </header>
+              <dl class="study__body">
+                <div>
+                  <dt>Client challenge</dt>
+                  <dd>{p.challenge}</dd>
+                </div>
+                <div>
+                  <dt>LucidAccuracy solution</dt>
+                  <dd>{p.solution}</dd>
+                </div>
+                <div>
+                  <dt>Services provided</dt>
+                  <dd>
+                    <ul class="chips">
+                      {p.services.map((s) => <li class="chip">{s}</li>)}
+                    </ul>
+                  </dd>
+                </div>
+                <div>
+                  <dt>Project scope</dt>
+                  <dd>{p.scope}</dd>
+                </div>
+                <div>
+                  <dt>Outcome</dt>
+                  <dd class="study__pending">Results are shared on request, subject to client approval.</dd>
+                </div>
+              </dl>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <Cta title="Plan your own project with us" text="Tell us about the challenge. We will show you how a comparable engagement was scoped and delivered." />
+</Base>
+
+<style>
+  .cases {
+    display: grid;
+    gap: 16px;
+  }
+  .study {
+    display: grid;
+    gap: 28px 64px;
+    padding: clamp(24px, 3.6vw, 48px);
+    border-radius: var(--r-lg);
+    background: var(--paper);
+    box-shadow: inset 0 0 0 1px var(--line);
+    scroll-margin-top: calc(var(--header-h) + 16px);
+    transition: box-shadow 0.5s;
+  }
+  .study:target {
+    box-shadow:
+      inset 0 0 0 2px var(--teal),
+      var(--shadow-2);
+  }
+  .study__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    margin-bottom: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  .study__meta span {
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--sand);
+    color: var(--ink-2);
+  }
+  .study__meta span:first-child {
+    background: var(--teal-tint);
+    color: var(--teal-deep);
+  }
+  .study h2 {
+    font-size: clamp(1.625rem, 2.6vw, 2.25rem);
+  }
+  .study h2 span {
+    color: var(--ink-2);
+    font-weight: 500;
+  }
+  .study__body div {
+    display: grid;
+    gap: 6px 24px;
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+  }
+  .study__body dt {
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+  .study__body dd {
+    color: var(--ink-2);
+  }
+  .study__pending {
+    font-style: italic;
+  }
+  @media (min-width: 640px) {
+    .study__body div {
+      grid-template-columns: 170px minmax(0, 1fr);
+    }
+  }
+  @media (min-width: 1000px) {
+    .study {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    }
+    .study__head {
+      position: sticky;
+      top: calc(var(--header-h) + 32px);
+      align-self: start;
+    }
+  }
+</style>

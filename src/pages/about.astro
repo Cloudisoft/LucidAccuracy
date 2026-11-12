@@ -1,0 +1,158 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Cta from '../components/Cta.astro';
+import { site, pillars, whyUs, markets } from '../data/site';
+const crumbs = [{ name: 'About Us', href: '/about/' }];
+const process = [
+  { name: 'Discover', text: 'We analyze your needs, goals and challenges and agree what success looks like.' },
+  { name: 'Design', text: 'Our specialists shape a solution around your business objectives and constraints.' },
+  { name: 'Deliver', text: 'We carry out the work with quality checks at every milestone.' },
+];
+---
+
+<Base
+  title="About LucidAccuracy | Global Workforce, Technology & AI Company"
+  description="About LucidAccuracy: a global workforce, technology and AI solutions company working with organizations in the United States, Canada, UK, Australia, Europe and India."
+  og="about"
+  {crumbs}
+  schema={[{ '@context': 'https://schema.org', '@type': 'AboutPage', url: `${site.url}/about/`, about: { '@id': `${site.url}/#organization` } }]}
+>
+  <PageHero title="A global company built on people, technology and AI" lead={site.positioning} {crumbs} />
+
+  <section class="section">
+    <div class="wrap split">
+      <div class="split__head">
+        <h2 data-reveal="mask">What LucidAccuracy does</h2>
+      </div>
+      <div class="prose" data-reveal>
+        <p class="big">
+          LucidAccuracy is a global solutions provider. We partner with organizations to deliver workforce, technology,
+          training and business process solutions that scale and stay compliant.
+        </p>
+        <p>
+          The company began in recruitment and still places professionals every day. Over time clients asked for more:
+          teams to build their software, programs to train their staff and people to run their back-office processes.
+          Today those are established business lines, joined by our own AI product, the LucidAI Calling Agent.
+        </p>
+        <p>
+          We work with organizations in {markets.map((m) => m.name).join(', ').replace(/, ([^,]*)$/, ' and $1')}, with
+          offices in the United States.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sand">
+    <div class="wrap">
+      <div class="head">
+        <h2 data-reveal="mask">Three sides of the business</h2>
+      </div>
+      <ul class="panels">
+        {
+          pillars.map((p, i) => (
+            <li data-reveal style={`--i:${i}`}>
+              <a class="panel" href={p.href}>
+                <p class="tag">{p.label}</p>
+                <h3>{p.title}</h3>
+                <p>{p.text}</p>
+                <span class="arrow-link">{p.cta} <Icon name="ArrowRight" /></span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--night">
+    <div class="wrap">
+      <div class="head head--split">
+        <h2 data-reveal="mask">How we work with clients</h2>
+        <p data-reveal style="--i:1">The same three stages apply to a single hire and to a multi-year program.</p>
+      </div>
+      <ol class="steps steps--3">
+        {
+          process.map((st, i) => (
+            <li data-reveal style={`--i:${i}`}>
+              <h3>{st.name}</h3>
+              <p>{st.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split">
+      <div class="split__head">
+        <h2 data-reveal="mask">Why clients stay with LucidAccuracy</h2>
+      </div>
+      <ul class="rows">
+        {
+          whyUs.map((w, i) => (
+            <li data-reveal style={`--i:${i % 4}`}>
+              <h3>{w.name}</h3>
+              <p>{w.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--sand section--tight">
+    <div class="wrap partner" data-reveal>
+      <div>
+        <h2>Strategic partner: {site.partner.name}</h2>
+        <p>
+          {site.partner.name} extends LucidAccuracy's capabilities with global workforce and business support solutions
+          across international markets.
+        </p>
+      </div>
+      <a class="btn btn--ghost" href={site.partner.url} rel="noopener">Visit {site.partner.name} <Icon name="ArrowUpRight" /></a>
+    </div>
+  </section>
+
+  <Cta />
+</Base>
+
+<style>
+  .big {
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+    line-height: 1.3;
+    letter-spacing: -0.018em;
+    color: var(--ink) !important;
+    font-weight: 500;
+  }
+  .tag {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal-deep) !important;
+  }
+  @media (min-width: 1080px) {
+    .steps--3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .partner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px 48px;
+  }
+  .partner h2 {
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    margin-bottom: 10px;
+  }
+  .partner p {
+    color: var(--ink-2);
+    max-width: 60ch;
+  }
+</style>

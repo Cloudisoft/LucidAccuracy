@@ -1,0 +1,220 @@
+---
+import land from '../data/land.json';
+import { markets, locations } from '../data/site';
+
+// Equirectangular projection cropped to inhabited latitudes.
+const LON0 = -170;
+const LON1 = 180;
+const LAT0 = 78;
+const LAT1 = -56;
+const K = 3;
+const W = (LON1 - LON0) * K;
+const H = (LAT0 - LAT1) * K;
+const x = (lon: number) => (lon - LON0) * K;
+const y = (lat: number) => (LAT0 - lat) * K;
+const pct = (lat: number, lon: number) => `left:${((x(lon) / W) * 100).toFixed(2)}%;top:${((y(lat) / H) * 100).toFixed(2)}%`;
+const dots = (land.flat as number[][]).map(([lat, lon]) => `M${x(lon).toFixed(1)} ${y(lat).toFixed(1)}h.01`).join('');
+const us = markets[0];
+const arc = (m: (typeof markets)[number]) => {
+  const x0 = x(us.lon);
+  const y0 = y(us.lat);
+  const x1 = x(m.lon);
+  const y1 = y(m.lat);
+  const lift = Math.min(150, Math.abs(x1 - x0) * 0.28 + 30);
+  return `M${x0} ${y0}Q${(x0 + x1) / 2} ${Math.min(y0, y1) - lift} ${x1} ${y1}`;
+};
+---
+
+<div class="map" data-switch>
+  <div class="map__stage" data-reveal="scale">
+    <svg viewBox={`0 0 ${W} ${H}`} aria-hidden="true">
+      <path class="map__land" d={dots}></path>
+      {markets.slice(1).map((m, i) => <path class="map__arc" d={arc(m)} style={`--i:${i}`} />)}
+    </svg>
+    {
+      locations.map((l) => (
+        <span class="map__office" style={pct(l.lat, l.lon)} title={`${l.city}, ${l.state}`}></span>
+      ))
+    }
+    {
+      markets.map((m, i) => (
+        <button
+          class:list={['map__pin', { 'is-active': i === 0 }]}
+          style={pct(m.lat, m.lon)}
+          data-switch-to={m.code}
+          aria-pressed={i === 0 ? 'true' : 'false'}
+        >
+          <span class="map__dot" aria-hidden="true"></span>
+          <span class="map__label">{m.short}</span>
+        </button>
+      ))
+    }
+  </div>
+
+  <ul class="map__list">
+    {
+      markets.map((m, i) => (
+        <li>
+          <button class:list={['map__market', { 'is-active': i === 0 }]} data-switch-to={m.code} aria-pressed={i === 0 ? 'true' : 'false'}>
+            <img src={`/flags/${m.code}.svg`} alt="" width="32" height="24" loading="lazy" />
+            <span>
+              <strong>{m.name}</strong>
+              <span class="map__note">{m.note}</span>
+            </span>
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .map {
+    display: grid;
+    gap: clamp(28px, 4vw, 56px);
+  }
+  .map__stage {
+    position: relative;
+    container-type: inline-size;
+  }
+  svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .map__land {
+    fill: none;
+    stroke: hsl(168 26% 62%);
+    stroke-width: 3.4;
+    stroke-linecap: round;
+  }
+  .map__arc {
+    fill: none;
+    stroke: var(--amber);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-dasharray: 2 8;
+    animation: dash-flow 2.4s linear infinite;
+    opacity: 0.9;
+  }
+  .map__office {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    margin: -3.5px;
+    border-radius: 50%;
+    background: var(--ink);
+    box-shadow: 0 0 0 2px var(--cream);
+  }
+  .map__pin {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    margin: -22px 0 0 -22px;
+    padding-right: 4px;
+  }
+  .map__dot {
+    position: relative;
+    flex: none;
+    width: 44px;
+    height: 44px;
+  }
+  .map__dot::before,
+  .map__dot::after {
+    content: '';
+    position: absolute;
+    inset: 15px;
+    border-radius: 50%;
+    background: var(--teal-deep);
+    transition: background-color 0.3s;
+  }
+  .map__dot::after {
+    background: none;
+    border: 1.5px solid var(--teal);
+    animation: pulse-ring 2.6s var(--ease) infinite;
+  }
+  .map__label {
+    margin-left: -12px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--paper);
+    box-shadow:
+      inset 0 0 0 1px var(--line),
+      var(--shadow-1);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition:
+      background-color 0.3s,
+      color 0.3s,
+      transform 0.4s var(--ease);
+  }
+  .map__pin.is-active .map__dot::before {
+    background: var(--amber);
+  }
+  .map__pin.is-active .map__dot::after {
+    border-color: var(--amber);
+  }
+  .map__pin.is-active .map__label {
+    background: var(--ink);
+    color: var(--cream);
+    transform: translateX(3px);
+  }
+  .map__list {
+    display: grid;
+    gap: 0 28px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  }
+  .map__market {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    width: 100%;
+    padding: 18px 0;
+    text-align: left;
+    border-top: 1px solid var(--line);
+    position: relative;
+  }
+  .map__market::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--teal);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s var(--ease);
+  }
+  .map__market.is-active::before {
+    transform: scaleX(1);
+  }
+  .map__market img {
+    flex: none;
+    margin-top: 3px;
+    border-radius: 4px;
+    box-shadow: 0 0 0 1px hsl(210 25% 14% / 0.12);
+  }
+  .map__market strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.1875rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .map__note {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  @container (max-width: 620px) {
+    .map__label {
+      display: none;
+    }
+  }
+</style>

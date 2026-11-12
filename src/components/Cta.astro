@@ -1,0 +1,75 @@
+---
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+interface Props {
+  title?: string;
+  text?: string;
+  primary?: { label: string; href: string };
+}
+const {
+  title = "Let's Build What's Next",
+  text = 'Tell us what you need to hire, build or automate. A member of the LucidAccuracy team will reply within one business day.',
+  primary = { label: 'Talk to Our Team', href: '/contact/' },
+} = Astro.props;
+---
+
+<section class="cta section--night">
+  <div class="cta__glow" aria-hidden="true"></div>
+  <div class="wrap cta__in">
+    <h2 data-reveal="mask">{title}</h2>
+    <div class="cta__side" data-reveal style="--i:2">
+      <p>{text}</p>
+      <div class="actions">
+        <a href={primary.href} class="btn btn--amber">{primary.label} <Icon name="ArrowRight" /></a>
+        <a href={site.phoneHref} class="btn btn--ghost"><Icon name="Phone" /> {site.phone}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(80px, 11vw, 160px);
+    border-bottom: 1px solid var(--night-line);
+  }
+  .cta__glow {
+    position: absolute;
+    left: 50%;
+    bottom: -60%;
+    width: 120%;
+    aspect-ratio: 2;
+    transform: translateX(-50%);
+    background: radial-gradient(closest-side, hsl(168 65% 34% / 0.42), transparent);
+    animation: breathe 9s ease-in-out infinite alternate;
+  }
+  @keyframes breathe {
+    to {
+      transform: translateX(-50%) scale(1.12);
+      opacity: 0.75;
+    }
+  }
+  .cta__in {
+    position: relative;
+    display: grid;
+    gap: 32px 72px;
+    align-items: end;
+  }
+  h2 {
+    font-size: clamp(2.5rem, 6.4vw, 5.5rem);
+    letter-spacing: -0.035em;
+    max-width: 11ch;
+  }
+  p {
+    color: var(--on-night-2);
+    font-size: 1.125rem;
+    max-width: 44ch;
+    margin-bottom: 28px;
+  }
+  @media (min-width: 960px) {
+    .cta__in {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    }
+  }
+</style>

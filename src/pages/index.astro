@@ -1,0 +1,1177 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Globe from '../components/Globe.astro';
+import WorldMap from '../components/WorldMap.astro';
+import CallDemo from '../components/CallDemo.astro';
+import Cta from '../components/Cta.astro';
+import { site, pillars, solutions, industries, techCapabilities, whyUs, projects, agent, locations, markets } from '../data/site';
+
+const support = solutions.filter((s) => ['training', 'consulting', 'business-process'].includes(s.slug));
+const featured = [projects[0], projects[2], projects[1]];
+const marquee = [
+  'Permanent Recruitment',
+  'Software Development',
+  'AI Calling Agent',
+  'Contract Staffing',
+  'Cloud Solutions',
+  'Corporate Training',
+  'Data & Analytics',
+  'Workforce Consulting',
+  'Cybersecurity',
+  'Back-office Operations',
+];
+const hub = techCapabilities.map((t, i) => {
+  const a = (i / techCapabilities.length) * Math.PI * 2 - Math.PI / 2;
+  return { ...t, x: 50 + Math.cos(a) * 39, y: 50 + Math.sin(a) * 39 };
+});
+const shortlist = [
+  ['Cloud Engineer', 'Toronto', 'Shortlisted'],
+  ['Clinical Coordinator', 'Manchester', 'Interview'],
+  ['Financial Analyst', 'Sydney', 'Screened'],
+  ['Process Engineer', 'Pune', 'Sourced'],
+];
+---
+
+<Base title="LucidAccuracy | Global Workforce, Technology & Business Solutions" description={site.description} og="home">
+  <!-- 1. Hero -->
+  <section class="hero on-night">
+    <div class="wrap hero__in">
+      <div class="hero__copy">
+        <p class="hero__line fade-up">Global Workforce <i>•</i> Technology <i>•</i> AI <i>•</i> Business Solutions</p>
+        <h1 class="lines">
+          <span class="line" style="--i:1"><span>Building Global Talent.</span></span>
+          <span class="line" style="--i:2"><span>Powering Technology.</span></span>
+          <span class="line" style="--i:3"><span>Driving Business <em>Forward.</em></span></span>
+        </h1>
+        <p class="hero__sub fade-up" style="--i:5">
+          LucidAccuracy partners with organizations across the United States, Canada, United Kingdom, Australia, Europe and India
+          to deliver workforce, technology, AI, consulting, training and business solutions.
+        </p>
+        <div class="actions fade-up" style="--i:6">
+          <a href="/solutions/" class="btn btn--amber">Explore Our Solutions <Icon name="ArrowRight" /></a>
+          <a href="/contact/" class="btn btn--ghost">Talk to Our Team</a>
+        </div>
+      </div>
+      <div class="hero__globe">
+        <Globe />
+      </div>
+    </div>
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        {[...marquee, ...marquee].map((m) => <span>{m}</span>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Global introduction -->
+  <section class="section intro">
+    <div class="wrap intro__in">
+      <h2 class="intro__statement" data-reveal>
+        A global workforce, technology and AI solutions company helping organizations{' '}
+        <span>build teams, adopt technology and automate business operations.</span>
+      </h2>
+      <div class="intro__side" data-reveal style="--i:2">
+        <p>
+          Clients come to LucidAccuracy to hire people, to deliver technology projects and to put AI to work on routine
+          conversations. One team covers all three, with training, consulting and business process support alongside.
+        </p>
+        <dl class="facts">
+          <div><dt>{markets.length}</dt><dd>markets served</dd></div>
+          <div><dt>{solutions.length + 1}</dt><dd>solution lines</dd></div>
+          <div><dt>{industries.length}</dt><dd>industries</dd></div>
+          <div><dt>{locations.length}</dt><dd>U.S. offices</dd></div>
+        </dl>
+        <a href="/about/" class="arrow-link">Read about the company <Icon name="ArrowRight" /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Core solutions -->
+  <section class="section section--sand solutions">
+    <div class="wrap">
+      <div class="head head--split">
+        <h2 data-reveal="mask">People, technology and AI from one company</h2>
+        <p data-reveal style="--i:1">
+          Three core businesses, each with its own specialists, supported by training, consulting and business process teams.
+        </p>
+      </div>
+
+      <div class="pillars" data-switch data-reveal>
+        {
+          pillars.map((p, i) => (
+            <article class:list={['pillar', `pillar--${p.key}`, { 'is-active': i === 0 }]} data-switch-to={p.key}>
+              <header class="pillar__head">
+                <p class="pillar__label">{p.label}</p>
+                <h3>{p.title}</h3>
+              </header>
+              <div class="pillar__more">
+                <div class="pillar__text">
+                  <p>{p.text}</p>
+                  <ul>
+                    {p.points.map((pt) => (
+                      <li>
+                        <Icon name="Check" size={16} /> {pt}
+                      </li>
+                    ))}
+                  </ul>
+                  <a href={p.href} class="arrow-link">
+                    {p.cta} <Icon name="ArrowRight" />
+                  </a>
+                </div>
+
+                <div class="pillar__visual" aria-hidden="true">
+                  {p.key === 'people' && (
+                    <ul class="v-list">
+                      {shortlist.map(([role, city, stage], n) => (
+                        <li style={`--n:${n}`}>
+                          <span>
+                            <b>{role}</b>
+                            {city}
+                          </span>
+                          <em>{stage}</em>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {p.key === 'technology' && (
+                    <div class="v-pipe">
+                      <ol>
+                        {['Design', 'Build', 'Test', 'Release'].map((s, n) => (
+                          <li style={`--n:${n}`}>{s}</li>
+                        ))}
+                      </ol>
+                      <pre>{`$ release web-platform\n  build    passed\n  tests    passed\n  deploy   live`}</pre>
+                    </div>
+                  )}
+                  {p.key === 'ai' && (
+                    <div class="v-call">
+                      <div class="v-call__wave">
+                        {Array.from({ length: 22 }, (_, n) => (
+                          <i style={`--d:${(0.6 + ((n * 37) % 9) / 12).toFixed(2)}s;--o:${(((n * 53) % 13) / -10).toFixed(2)}s`} />
+                        ))}
+                      </div>
+                      <p>
+                        <b>Inbound call answered</b>
+                        Lead qualified, appointment booked
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <ul class="support">
+        {
+          support.map((s, i) => (
+            <li data-reveal style={`--i:${i}`}>
+              <a href={`/solutions/${s.slug}/`}>
+                <span class="icon-tile">
+                  <Icon name={s.icon} />
+                </span>
+                <span>
+                  <strong>{s.title}</strong>
+                  <span>{s.lead}</span>
+                </span>
+                <Icon name="ArrowUpRight" class="support__arrow" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4. AI Calling Agent -->
+  <section class="section section--night agent">
+    <div class="agent__glow" aria-hidden="true"></div>
+    <div class="wrap agent__in">
+      <div class="agent__copy">
+        <p class="agent__tag" data-reveal><Icon name="AudioLines" size={18} /> {agent.name}</p>
+        <h2 data-reveal="mask" style="--i:1">{agent.hero}</h2>
+        <p class="agent__sub" data-reveal style="--i:2">{agent.sub}</p>
+        <p class="agent__text" data-reveal style="--i:3">
+          The agent answers and places phone calls for your business. It talks with customers, qualifies leads, schedules
+          appointments and follows up with prospects, 24 hours a day.
+        </p>
+        <ul class="chips" data-reveal style="--i:4">
+          {agent.capabilities.slice(0, 5).map((c) => <li class="chip">{c.name}</li>)}
+        </ul>
+        <div class="actions" data-reveal style="--i:5">
+          <a href="/ai-calling-agent/" class="btn btn--amber">Explore AI Calling Agent <Icon name="ArrowRight" /></a>
+          <a href="/contact/?topic=AI%20Calling%20Agent%20demo" class="btn btn--ghost">Book a Demo</a>
+        </div>
+      </div>
+      <div class="agent__demo" data-reveal="scale">
+        <CallDemo />
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Industries -->
+  <section class="section industries">
+    <div class="wrap">
+      <div class="head head--split">
+        <h2 data-reveal="mask">Industries we serve</h2>
+        <p data-reveal style="--i:1">
+          LucidAccuracy works well beyond technology hiring. Our teams support {industries.length} industries with talent,
+          technology and operations.
+        </p>
+      </div>
+      <div class="index" data-switch>
+        <ul class="index__list">
+          {
+            industries.map((ind, i) => (
+              <li>
+                <a href={`/industries/#${ind.slug}`} class:list={['index__item', { 'is-active': i === 0 }]} data-switch-to={ind.slug}>
+                  <span>{ind.name}</span>
+                  <Icon name="ArrowRight" size={20} />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="index__stage">
+          {
+            industries.map((ind, i) => (
+              <div class:list={['index__panel', { 'is-active': i === 0 }]} data-switch-panel={ind.slug}>
+                <span class="index__icon">
+                  <Icon name={ind.icon} size={44} stroke-width={1.3} />
+                </span>
+                <h3>{ind.name}</h3>
+                <p>{ind.text}</p>
+                <ul class="chips">
+                  {ind.roles.map((r) => <li class="chip">{r}</li>)}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Technology & AI capabilities -->
+  <section class="section section--sand tech">
+    <div class="wrap tech__in">
+      <div>
+        <div class="head">
+          <h2 data-reveal="mask">Technology and AI capabilities</h2>
+          <p data-reveal style="--i:1">
+            Our engineers design, build and run systems for clients. This is project delivery, separate from technology
+            staffing.
+          </p>
+        </div>
+        <ul class="rows tech__rows">
+          {
+            techCapabilities.map((t, i) => (
+              <li data-reveal style={`--i:${i % 4}`}>
+                <h3>{t.name}</h3>
+                <p>{t.text}</p>
+              </li>
+            ))
+          }
+        </ul>
+        <a href="/technology-ai/" class="arrow-link tech__link">See technology and AI services <Icon name="ArrowRight" /></a>
+      </div>
+
+      <div class="hub" aria-hidden="true" data-reveal="scale">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="39" class="hub__ring"></circle>
+          <circle cx="50" cy="50" r="22" class="hub__ring hub__ring--in"></circle>
+          {hub.map((n, i) => <line x1="50" y1="50" x2={n.x} y2={n.y} class="hub__line" style={`--i:${i}`} />)}
+        </svg>
+        <span class="hub__core">
+          <svg viewBox="0 0 64 64" width="44" height="44">
+            <path d="M45.4 21.6A17 17 0 1 0 49 32" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round"></path>
+            <circle cx="32" cy="32" r="5.5" fill="hsl(38 85% 52%)"></circle>
+          </svg>
+        </span>
+        {
+          hub.map((n, i) => (
+            <span class="hub__node" style={`left:${n.x}%;top:${n.y}%;--i:${i}`}>
+              <Icon name={n.icon} size={18} /> {n.short}
+            </span>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Selected projects -->
+  <section class="section work">
+    <div class="wrap">
+      <div class="head head--split">
+        <h2 data-reveal="mask">Selected projects</h2>
+        <p data-reveal style="--i:1">Examples of the work our workforce, technology and AI teams deliver for clients.</p>
+      </div>
+      <ul class="work__grid">
+        {
+          featured.map((p, i) => (
+            <li data-reveal style={`--i:${i}`}>
+              <a href={`/projects/#${p.slug}`} class="case">
+                <span class="case__meta">
+                  <span>{p.pillar}</span>
+                  <span>{p.market}</span>
+                </span>
+                <h3>{p.title}</h3>
+                <p>{p.challenge}</p>
+                <span class="case__foot">
+                  {p.industry} <Icon name="ArrowUpRight" size={20} />
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a href="/projects/" class="arrow-link work__all">See all projects <Icon name="ArrowRight" /></a>
+    </div>
+  </section>
+
+  <!-- 8. Global presence -->
+  <section class="section section--sand presence">
+    <div class="wrap">
+      <div class="head head--split">
+        <h2 data-reveal="mask">Global Reach. Local Expertise.</h2>
+        <p data-reveal style="--i:1">
+          LucidAccuracy supports organizations and professionals across major international markets, combining global
+          capabilities with an understanding of regional workforce and business requirements.
+        </p>
+      </div>
+      <WorldMap />
+      <a href="/global-presence/" class="arrow-link presence__link">See markets and office locations <Icon name="ArrowRight" /></a>
+    </div>
+  </section>
+
+  <!-- 9. Why LucidAccuracy -->
+  <section class="section why">
+    <div class="wrap why__in">
+      <div class="why__head">
+        <h2 data-reveal="mask">Why organizations choose LucidAccuracy</h2>
+        <p class="lead" data-reveal style="--i:1">
+          One accountable partner for talent, technology and operations, in the markets where you work.
+        </p>
+      </div>
+      <ol class="why__list">
+        {
+          whyUs.map((w, i) => (
+            <li data-reveal style={`--i:${i % 3}`}>
+              <h3>{w.name}</h3>
+              <p>{w.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <Cta />
+</Base>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    background:
+      radial-gradient(80% 70% at 78% 46%, hsl(168 65% 30% / 0.3), transparent 70%),
+      radial-gradient(50% 50% at 0% 100%, hsl(38 85% 52% / 0.09), transparent 70%), var(--night);
+    color: var(--on-night);
+    overflow: hidden;
+  }
+  .hero__in {
+    flex: 1;
+    display: grid;
+    align-items: center;
+    gap: 16px 32px;
+    padding-top: calc(var(--header-h) + 40px);
+    padding-bottom: 40px;
+  }
+  .hero__line {
+    margin-bottom: 26px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal-bright);
+  }
+  .hero__line i {
+    font-style: normal;
+    color: var(--amber);
+    margin-inline: 0.35em;
+  }
+  .hero h1 {
+    font-size: clamp(2.125rem, 4.15vw, 3.875rem);
+    letter-spacing: -0.034em;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--amber);
+  }
+  .hero__sub {
+    margin: 28px 0 34px;
+    max-width: 54ch;
+    font-size: clamp(1.0625rem, 1.35vw, 1.25rem);
+    line-height: 1.55;
+    color: var(--on-night-2);
+  }
+  .hero__in {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hero__globe {
+    width: min(118vw, 560px);
+    margin-inline: calc(50% - min(59vw, 280px));
+    margin-bottom: max(-34vw, -180px);
+  }
+  .marquee {
+    position: relative;
+    border-top: 1px solid var(--night-line);
+    background: hsl(188 42% 7.5% / 0.7);
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+  .marquee__track {
+    display: flex;
+    width: max-content;
+    animation: marquee 48s linear infinite;
+  }
+  .marquee:hover .marquee__track {
+    animation-play-state: paused;
+  }
+  .marquee span {
+    display: flex;
+    align-items: center;
+    padding: 18px 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--on-night-2);
+    white-space: nowrap;
+  }
+  .marquee span::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    margin-inline: 28px;
+    border-radius: 50%;
+    background: var(--teal);
+  }
+  @media (min-width: 1000px) {
+    .hero__in {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    }
+    .hero h1 .line {
+      white-space: nowrap;
+    }
+    .hero__globe {
+      width: min(58vw, 780px, 84svh);
+      margin: -6% -30% -6% -14%;
+      justify-self: start;
+    }
+  }
+
+  /* ---------- Intro ---------- */
+  .intro__in {
+    display: grid;
+    gap: 40px 80px;
+  }
+  .intro__statement {
+    font-size: clamp(1.75rem, 3.3vw, 2.875rem);
+    line-height: 1.14;
+    letter-spacing: -0.028em;
+    font-weight: 500;
+    max-width: 22ch;
+    text-wrap: pretty;
+  }
+  .intro__statement span {
+    color: var(--teal-deep);
+  }
+  .intro__side > p {
+    color: var(--ink-2);
+    font-size: 1.125rem;
+    max-width: 52ch;
+  }
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 24px;
+    margin: 32px 0 20px;
+    border-top: 1px solid var(--line);
+  }
+  .facts div {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .facts dt {
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    min-width: 1.4ch;
+    font-variant-numeric: tabular-nums;
+  }
+  .facts dd {
+    color: var(--ink-2);
+  }
+  @media (min-width: 960px) {
+    .intro__in {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+
+  /* ---------- Pillars ---------- */
+  .pillars {
+    display: grid;
+    gap: 14px;
+  }
+  .pillar {
+    position: relative;
+    border-radius: var(--r-lg);
+    padding: clamp(24px, 3vw, 36px);
+    overflow: hidden;
+    transition: flex-grow 0.8s var(--ease);
+  }
+  .pillar--people {
+    background: var(--amber-tint);
+    --accent: var(--amber-deep);
+  }
+  .pillar--technology {
+    background: hsl(165 36% 88%);
+    --accent: var(--teal-deep);
+  }
+  .pillar--ai {
+    background: var(--night);
+    color: var(--on-night);
+    --accent: var(--teal-bright);
+  }
+  .pillar__label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .pillar h3 {
+    font-size: clamp(1.5rem, 2.1vw, 1.875rem);
+    letter-spacing: -0.024em;
+    line-height: 1.12;
+    max-width: 16ch;
+  }
+  .pillar__more {
+    display: grid;
+    gap: 28px;
+    margin-top: 24px;
+  }
+  .pillar__text > p {
+    max-width: 46ch;
+    opacity: 0.82;
+  }
+  .pillar__text ul {
+    display: grid;
+    gap: 8px;
+    margin: 20px 0 16px;
+    font-weight: 500;
+  }
+  .pillar__text li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .pillar__text li :global(svg) {
+    color: var(--accent);
+    flex: none;
+  }
+  .pillar .arrow-link {
+    color: var(--accent);
+  }
+  .pillar__visual {
+    align-self: end;
+    font-size: 0.875rem;
+  }
+  .v-list {
+    display: grid;
+    gap: 8px;
+  }
+  .v-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 12px;
+    background: hsl(45 40% 99% / 0.85);
+    box-shadow: var(--shadow-1);
+    animation: row-nudge 6s var(--ease-io) infinite;
+    animation-delay: calc(var(--n) * 1.5s);
+  }
+  .v-list b {
+    display: block;
+    font-weight: 600;
+  }
+  .v-list span {
+    color: var(--ink-2);
+  }
+  .v-list b {
+    color: var(--ink);
+  }
+  .v-list em {
+    font-style: normal;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--amber-tint);
+    color: var(--amber-deep);
+    white-space: nowrap;
+  }
+  @keyframes row-nudge {
+    0%,
+    22%,
+    100% {
+      transform: none;
+    }
+    8% {
+      transform: translateX(8px);
+    }
+  }
+  .v-pipe ol {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .v-pipe li {
+    flex: 1;
+    padding: 9px 4px;
+    border-radius: 9px;
+    text-align: center;
+    font-weight: 600;
+    background: hsl(45 40% 99% / 0.6);
+    animation: stage 5.6s linear infinite;
+    animation-delay: calc(var(--n) * 1.4s);
+  }
+  @keyframes stage {
+    0%,
+    24% {
+      background: var(--teal-deep);
+      color: #fff;
+    }
+    25%,
+    100% {
+      background: hsl(45 40% 99% / 0.6);
+      color: inherit;
+    }
+  }
+  .v-pipe pre {
+    margin: 0;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: var(--night);
+    color: var(--on-night-2);
+    font:
+      500 0.8125rem/1.7 ui-monospace,
+      'SF Mono',
+      Menlo,
+      monospace;
+    overflow: hidden;
+  }
+  .v-call {
+    padding: 16px;
+    border-radius: 14px;
+    background: var(--night-2);
+    box-shadow: inset 0 0 0 1px var(--night-line);
+  }
+  .v-call__wave {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 54px;
+    margin-bottom: 12px;
+  }
+  .v-call__wave i {
+    flex: 1;
+    height: 100%;
+    border-radius: 3px;
+    background: var(--teal-bright);
+    animation: v-wave var(--d) ease-in-out var(--o) infinite alternate;
+  }
+  @keyframes v-wave {
+    from {
+      transform: scaleY(0.15);
+    }
+    to {
+      transform: scaleY(0.95);
+    }
+  }
+  .v-call p {
+    color: var(--on-night-2);
+  }
+  .v-call b {
+    display: block;
+    color: var(--on-night);
+    font-weight: 600;
+  }
+  @media (min-width: 1100px) {
+    .pillars {
+      display: flex;
+      height: 560px;
+    }
+    .pillar {
+      flex: 1 1 0;
+      min-width: 0;
+      cursor: pointer;
+    }
+    .pillar.is-active {
+      flex-grow: 2.6;
+      cursor: default;
+    }
+    .pillar__more {
+      position: absolute;
+      left: clamp(24px, 3vw, 36px);
+      bottom: clamp(24px, 3vw, 36px);
+      width: min(43vw, 588px);
+      grid-template-columns: 1.1fr 1fr;
+      align-items: end;
+      margin: 0;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(14px);
+      transition:
+        opacity 0.3s,
+        transform 0.5s var(--ease),
+        visibility 0.3s;
+    }
+    .pillar.is-active .pillar__more {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      transition-delay: 0.22s;
+    }
+  }
+
+  .support {
+    display: grid;
+    gap: 0 40px;
+    margin-top: clamp(32px, 4vw, 56px);
+  }
+  .support a {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 22px 0;
+    border-top: 1px solid var(--line);
+    transition: transform 0.4s var(--ease);
+  }
+  .support a:hover {
+    transform: translateY(-2px);
+  }
+  .support strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.1875rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    margin-bottom: 4px;
+  }
+  .support a > span:nth-child(2) > span {
+    color: var(--ink-2);
+    font-size: 0.9688rem;
+  }
+  .support :global(.support__arrow) {
+    flex: none;
+    margin-left: auto;
+    color: var(--teal-deep);
+    transition: transform 0.4s var(--ease);
+  }
+  .support a:hover :global(.support__arrow) {
+    transform: translate(3px, -3px);
+  }
+  .support .icon-tile {
+    background: var(--paper);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  @media (min-width: 900px) {
+    .support {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* ---------- AI agent banner ---------- */
+  .agent {
+    position: relative;
+    overflow: hidden;
+  }
+  .agent__glow {
+    position: absolute;
+    right: -10%;
+    top: -20%;
+    width: 70%;
+    aspect-ratio: 1;
+    background: radial-gradient(closest-side, hsl(168 65% 34% / 0.3), transparent);
+  }
+  .agent__in {
+    position: relative;
+    display: grid;
+    gap: 48px 72px;
+    align-items: center;
+  }
+  .agent__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: var(--teal-bright);
+  }
+  .agent__sub {
+    margin-top: 16px;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 1.9vw, 1.625rem);
+    font-weight: 500;
+    letter-spacing: -0.018em;
+    color: var(--amber);
+  }
+  .agent__text {
+    margin: 20px 0 24px;
+    max-width: 50ch;
+    color: var(--on-night-2);
+    font-size: 1.125rem;
+  }
+  .agent .actions {
+    margin-top: 32px;
+  }
+  @media (min-width: 1000px) {
+    .agent__in {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    }
+  }
+
+  /* ---------- Industries index ---------- */
+  .index {
+    display: grid;
+    gap: 40px 72px;
+  }
+  .index__list {
+    border-top: 1px solid var(--line);
+  }
+  .index__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 60px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-display);
+    font-size: clamp(1.1875rem, 1.9vw, 1.5rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--ink-2);
+    transition:
+      color 0.3s,
+      padding 0.5s var(--ease);
+  }
+  .index__item :global(svg) {
+    flex: none;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition:
+      opacity 0.3s,
+      transform 0.5s var(--ease);
+    color: var(--teal-deep);
+  }
+  .index__item.is-active,
+  .index__item:hover {
+    color: var(--ink);
+    padding-left: 14px;
+  }
+  .index__item.is-active :global(svg),
+  .index__item:hover :global(svg) {
+    opacity: 1;
+    transform: none;
+  }
+  .index__stage {
+    display: none;
+  }
+  @media (min-width: 900px) {
+    .index {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+    .index__stage {
+      display: grid;
+      position: sticky;
+      top: calc(var(--header-h) + 32px);
+      align-self: start;
+      min-height: 440px;
+      border-radius: var(--r-lg);
+      background: var(--night);
+      color: var(--on-night);
+      overflow: hidden;
+    }
+    .index__panel {
+      grid-area: 1 / 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 40px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(16px);
+      transition:
+        opacity 0.3s,
+        transform 0.6s var(--ease),
+        visibility 0.3s;
+    }
+    .index__panel.is-active {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      transition-delay: 0.08s;
+    }
+    .index__icon {
+      display: grid;
+      place-items: center;
+      justify-items: start;
+      margin-bottom: auto;
+      color: var(--teal-bright);
+    }
+    .index__panel h3 {
+      font-size: 1.875rem;
+      letter-spacing: -0.024em;
+      margin-bottom: 12px;
+    }
+    .index__panel p {
+      color: var(--on-night-2);
+      margin-bottom: 22px;
+      max-width: 44ch;
+    }
+    .index__panel .chip {
+      background: hsl(176 22% 100% / 0.07);
+      box-shadow: inset 0 0 0 1px var(--night-line);
+      color: var(--on-night);
+    }
+  }
+
+  /* ---------- Technology hub ---------- */
+  .tech__in {
+    display: grid;
+    gap: 56px 72px;
+    align-items: center;
+  }
+  .tech .head {
+    margin-bottom: 36px;
+  }
+  .tech__rows h3 {
+    font-size: 1.0625rem;
+  }
+  .tech__rows > li {
+    padding-block: 15px;
+  }
+  .tech__rows p {
+    font-size: 0.9688rem;
+  }
+  .tech__link {
+    margin-top: 20px;
+  }
+  .hub {
+    display: none;
+    position: relative;
+    aspect-ratio: 1;
+    width: 100%;
+    max-width: 560px;
+    justify-self: center;
+  }
+  .hub > svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .hub__ring {
+    fill: none;
+    stroke: hsl(168 30% 60% / 0.5);
+    stroke-width: 0.25;
+    stroke-dasharray: 0.6 1.6;
+  }
+  .hub__ring--in {
+    stroke-dasharray: none;
+    stroke: hsl(168 30% 60% / 0.35);
+  }
+  .hub__line {
+    stroke: var(--teal);
+    stroke-width: 0.45;
+    stroke-linecap: round;
+    stroke-dasharray: 1.2 4;
+    animation: hub-flow 2.2s linear infinite;
+    animation-delay: calc(var(--i) * -0.31s);
+  }
+  @keyframes hub-flow {
+    to {
+      stroke-dashoffset: -10.4;
+    }
+  }
+  .hub__core {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 21%;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border-radius: 28%;
+    background: var(--teal);
+    box-shadow:
+      0 0 0 10px hsl(168 65% 34% / 0.12),
+      0 24px 48px -16px hsl(169 70% 20% / 0.6);
+  }
+  .hub__node {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    transform: translate(-50%, -50%);
+    border-radius: 999px;
+    background: var(--paper);
+    box-shadow:
+      inset 0 0 0 1px var(--line),
+      var(--shadow-1);
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    animation: bob 5s ease-in-out infinite alternate;
+    animation-delay: calc(var(--i) * -0.7s);
+  }
+  .hub__node :global(svg) {
+    color: var(--teal-deep);
+  }
+  @keyframes bob {
+    to {
+      translate: 0 -7px;
+    }
+  }
+  @media (min-width: 1000px) {
+    .tech__in {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+    .hub {
+      display: block;
+    }
+  }
+
+  /* ---------- Projects ---------- */
+  .work__grid {
+    display: grid;
+    gap: 16px;
+  }
+  .case {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 340px;
+    padding: 28px;
+    border-radius: var(--r-lg);
+    background: var(--paper);
+    box-shadow: inset 0 0 0 1px var(--line);
+    transition:
+      transform 0.5s var(--ease),
+      box-shadow 0.5s var(--ease),
+      background-color 0.4s;
+  }
+  .case:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      inset 0 0 0 1px var(--teal),
+      var(--shadow-2);
+  }
+  .case__meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 40px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--teal-deep);
+  }
+  .case__meta span + span {
+    color: var(--ink-2);
+    font-weight: 500;
+  }
+  .case h3 {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+  }
+  .case p {
+    color: var(--ink-2);
+    margin-bottom: 28px;
+  }
+  .case__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+  .case__foot :global(svg) {
+    color: var(--teal-deep);
+    transition: transform 0.4s var(--ease);
+  }
+  .case:hover .case__foot :global(svg) {
+    transform: translate(3px, -3px);
+  }
+  .work__all,
+  .presence__link {
+    margin-top: 28px;
+  }
+  @media (min-width: 900px) {
+    .work__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* ---------- Why ---------- */
+  .why__in {
+    display: grid;
+    gap: 40px 80px;
+  }
+  .why__head .lead {
+    margin-top: 20px;
+  }
+  .why__list {
+    border-top: 1px solid var(--line);
+  }
+  .why__list li {
+    display: grid;
+    gap: 6px 32px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .why__list h3 {
+    font-size: 1.25rem;
+  }
+  .why__list p {
+    color: var(--ink-2);
+  }
+  @media (min-width: 960px) {
+    .why__in {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    }
+    .why__head {
+      position: sticky;
+      top: calc(var(--header-h) + 32px);
+      align-self: start;
+    }
+  }
+</style>

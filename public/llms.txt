@@ -1,0 +1,27 @@
+# LucidAccuracy
+
+> LucidAccuracy is a global workforce, technology and AI solutions company helping organizations worldwide build teams, solve technology challenges and automate business operations.
+
+LucidAccuracy serves organizations in the United States, Canada, the United Kingdom, Australia, Europe and India. It has U.S. offices in Sacramento (California), Glastonbury (Connecticut) and Canton (Ohio). Contact: Info@lucidaccuracy.com, +1 307-999-9564.
+
+## Solutions
+
+- [Recruitment & Workforce Solutions](https://lucidaccuracy.com/solutions/recruitment-workforce/): Permanent recruitment, contract staffing, temporary and flexible workforce, executive and specialized hiring, workforce management, recruitment process support and talent acquisition support.
+- [Technology Solutions](https://lucidaccuracy.com/solutions/technology/): Software and application development, cloud, data and analytics, AI and automation, cybersecurity, digital transformation and managed IT support.
+- [Training & Professional Development](https://lucidaccuracy.com/solutions/training/): Corporate training, technology training, upskilling and reskilling, professional development and certification support.
+- [Consulting & Professional Services](https://lucidaccuracy.com/solutions/consulting/): Workforce consulting, technology consulting and business transformation.
+- [Business Process Solutions](https://lucidaccuracy.com/solutions/business-process/): Back-office operations, customer support, process management and business support.
+
+## Products
+
+- [LucidAI Calling Agent](https://lucidaccuracy.com/ai-calling-agent/): An AI voice agent that automates inbound and outbound phone conversations: lead qualification, appointment scheduling, answering frequently asked questions, automated follow-ups and call reporting, available 24/7.
+
+## Company
+
+- [About LucidAccuracy](https://lucidaccuracy.com/about/): Company overview, the three core businesses (People, Technology, AI) and how engagements run.
+- [Industries](https://lucidaccuracy.com/industries/): Technology and IT, healthcare, engineering, finance and accounting, pharmaceutical and life sciences, manufacturing, logistics, telecommunications, retail, energy, and business and professional services.
+- [Technology & AI](https://lucidaccuracy.com/technology-ai/): Technology capabilities and AI products.
+- [Projects](https://lucidaccuracy.com/projects/): Case studies across workforce, technology, AI, training and business process work.
+- [Global Presence](https://lucidaccuracy.com/global-presence/): Markets served and U.S. office addresses.
+- [Careers](https://lucidaccuracy.com/careers/): How to find roles with LucidAccuracy and its clients.
+- [Contact](https://lucidaccuracy.com/contact/): Contact form, phone and email.

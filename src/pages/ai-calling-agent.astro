@@ -1,0 +1,450 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import CallDemo from '../components/CallDemo.astro';
+import Faq from '../components/Faq.astro';
+import Cta from '../components/Cta.astro';
+import { agent, site } from '../data/site';
+import { faqSchema } from '../data/schema';
+
+const crumbs = [
+  { name: 'Products', href: '/products/' },
+  { name: agent.name, href: '/ai-calling-agent/' },
+];
+const title = 'LucidAI Calling Agent | AI Voice Automation by LucidAccuracy';
+const description =
+  "Explore LucidAccuracy's AI Calling Agent for intelligent voice automation, lead qualification, appointment scheduling, follow-ups and business communication.";
+const demo = '/contact/?topic=AI%20Calling%20Agent%20demo';
+const product = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: agent.name,
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Cloud',
+  description: agent.description,
+  url: `${site.url}/ai-calling-agent/`,
+  featureList: agent.capabilities.map((c) => c.name),
+  provider: { '@id': `${site.url}/#organization` },
+};
+// Illustrative figures for the reporting mock-up.
+const report = [
+  { label: 'Appointment booked', pct: 46 },
+  { label: 'Lead qualified', pct: 27 },
+  { label: 'Question answered', pct: 18 },
+  { label: 'Passed to staff', pct: 9 },
+];
+const recent = [
+  ['Inbound', 'Appointment booked', '02:14'],
+  ['Outbound', 'Lead qualified', '03:41'],
+  ['Inbound', 'Question answered', '01:05'],
+  ['Outbound', 'Follow-up completed', '01:52'],
+];
+---
+
+<Base {title} {description} og="ai-calling-agent" {crumbs} schema={[product, faqSchema(agent.faqs)]}>
+  <!-- Hero -->
+  <section class="ahero on-night">
+    <div class="ahero__glow" aria-hidden="true"></div>
+    <div class="wrap ahero__in">
+      <div>
+        <p class="ahero__tag fade-up"><Icon name="AudioLines" size={18} /> {agent.name}</p>
+        <h1 class="lines">
+          <span class="line" style="--i:1"><span>Meet Your</span></span>
+          <span class="line" style="--i:2"><span>AI Calling Agent</span></span>
+        </h1>
+        <p class="ahero__sub fade-up" style="--i:4">{agent.sub}</p>
+        <p class="ahero__text fade-up" style="--i:5">
+          An AI voice agent that answers and places phone calls for your business. It qualifies leads, schedules
+          appointments, answers common questions and follows up with prospects at any hour.
+        </p>
+        <div class="actions fade-up" style="--i:6">
+          <a href={demo} class="btn btn--amber">Book a Demo <Icon name="ArrowRight" /></a>
+          <a href="/contact/?topic=AI%20Calling%20Agent%20demo" class="btn btn--ghost">Talk to Our AI Team</a>
+        </div>
+      </div>
+      <div class="ahero__demo fade-up" style="--i:4">
+        <CallDemo tabs />
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits and capabilities -->
+  <section class="section" id="capabilities">
+    <div class="wrap">
+      <div class="head head--split">
+        <h2 data-reveal="mask">What the calling agent does</h2>
+        <p data-reveal style="--i:1">{agent.description}</p>
+      </div>
+      <ul class="cells">
+        {
+          agent.capabilities.map((c, i) => (
+            <li data-reveal style={`--i:${i % 3}`}>
+              <span class="icon-tile"><Icon name={c.icon} /></span>
+              <h3>{c.name}</h3>
+              <p>{c.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section section--night" id="how-it-works">
+    <div class="wrap">
+      <div class="head head--split">
+        <h2 data-reveal="mask">How the agent goes live</h2>
+        <p data-reveal style="--i:1">Four steps from first conversation to calls being handled. Our AI team does the setup with you.</p>
+      </div>
+      <ol class="steps">
+        {
+          agent.steps.map((st, i) => (
+            <li data-reveal style={`--i:${i}`}>
+              <h3>{st.name}</h3>
+              <p>{st.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Use cases -->
+  <section class="section" id="use-cases">
+    <div class="wrap">
+      <div class="head head--split">
+        <h2 data-reveal="mask">Use cases by industry</h2>
+        <p data-reveal style="--i:1">The same agent is configured for the calls each industry handles most.</p>
+      </div>
+      <ul class="uses">
+        {
+          agent.useCases.map((u, i) => (
+            <li data-reveal style={`--i:${i % 4}`}>
+              <Icon name={u.icon} size={26} stroke-width={1.6} />
+              <h3>{u.name}</h3>
+              <p>{u.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Integrations + analytics -->
+  <section class="section section--sand" id="integrations">
+    <div class="wrap split">
+      <div class="split__head">
+        <h2 data-reveal="mask">Integrations with the systems you use</h2>
+        <p class="lead" data-reveal style="--i:1">
+          The agent works alongside your phone numbers, CRM and calendar, where supported. We confirm compatibility with
+          your stack during the demo.
+        </p>
+      </div>
+      <ul class="rows">
+        {
+          agent.integrations.map((n, i) => (
+            <li class="integ" data-reveal style={`--i:${i}`}>
+              <h3><span class="icon-tile"><Icon name={n.icon} /></span>{n.name}</h3>
+              <p>{n.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="analytics">
+    <div class="wrap report__wrap">
+      <div>
+        <h2 data-reveal="mask">Call analytics and reporting</h2>
+        <p class="lead" data-reveal style="--i:1">
+          Every call ends with a recorded outcome, a duration and a transcript. Reports show what callers asked for and
+          what the agent achieved, so your team knows where to follow up.
+        </p>
+        <ul class="ticks" data-reveal style="--i:2">
+          <li><Icon name="Check" size={18} /> Outcome recorded for every call</li>
+          <li><Icon name="Check" size={18} /> Full transcripts for review</li>
+          <li><Icon name="Check" size={18} /> Results passed to your CRM, where supported</li>
+        </ul>
+      </div>
+      <div class="report" data-reveal="scale" aria-label="Example call report">
+        <div class="report__bar">
+          <strong>Call outcomes</strong>
+          <span>Example report</span>
+        </div>
+        <ul class="report__bars">
+          {
+            report.map((r, i) => (
+              <li style={`--w:${r.pct}%;--i:${i}`}>
+                <span>{r.label}</span>
+                <i></i>
+              </li>
+            ))
+          }
+        </ul>
+        <table>
+          <thead>
+            <tr><th>Direction</th><th>Outcome</th><th>Length</th></tr>
+          </thead>
+          <tbody>
+            {recent.map(([d, o, l]) => <tr><td>{d}</td><td>{o}</td><td>{l}</td></tr>)}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security and privacy -->
+  <section class="section section--night" id="security">
+    <div class="wrap split">
+      <div class="split__head">
+        <h2 data-reveal="mask">Security and privacy controls</h2>
+        <p class="lead on-lead" data-reveal style="--i:1">
+          You decide how the agent introduces itself, what it records and when a person takes over.
+        </p>
+      </div>
+      <ul class="rows">
+        {
+          agent.security.map((sec, i) => (
+            <li data-reveal style={`--i:${i}`}>
+              <h3>{sec.name}</h3>
+              <p>{sec.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="wrap split">
+      <div class="split__head">
+        <h2 data-reveal="mask">AI Calling Agent questions</h2>
+        <p class="lead" data-reveal style="--i:1">
+          Something else to ask? <a class="link" href={`mailto:${site.email}`}>Email the AI team</a>.
+        </p>
+      </div>
+      <div data-reveal><Faq items={agent.faqs} /></div>
+    </div>
+  </section>
+
+  <Cta
+    title="Hear the agent on a live call"
+    text="Book a demo and our AI team will set up a call built around your own use case."
+    primary={{ label: 'Book a Demo', href: demo }}
+  />
+</Base>
+
+<style>
+  .ahero {
+    position: relative;
+    overflow: hidden;
+    background: var(--night);
+    color: var(--on-night);
+    padding: calc(var(--header-h) + clamp(40px, 6vw, 80px)) 0 clamp(56px, 7vw, 96px);
+  }
+  .ahero__glow {
+    position: absolute;
+    right: -12%;
+    top: -10%;
+    width: 80%;
+    aspect-ratio: 1;
+    background:
+      radial-gradient(closest-side, hsl(168 65% 34% / 0.36), transparent),
+      radial-gradient(closest-side at 30% 80%, hsl(38 85% 52% / 0.1), transparent);
+    animation: drift 16s ease-in-out infinite alternate;
+  }
+  @keyframes drift {
+    to {
+      transform: translate(-6%, 5%) scale(1.08);
+    }
+  }
+  .ahero__in {
+    position: relative;
+    display: grid;
+    gap: 48px 64px;
+    align-items: center;
+  }
+  .ahero__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 22px;
+    font-weight: 600;
+    color: var(--teal-bright);
+  }
+  .ahero h1 {
+    font-size: clamp(2.75rem, 5.6vw, 5rem);
+    letter-spacing: -0.036em;
+  }
+  @media (max-width: 480px) {
+    .ahero h1 {
+      font-size: 9.4vw;
+    }
+  }
+  .ahero__sub {
+    margin-top: 20px;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2vw, 1.75rem);
+    font-weight: 500;
+    letter-spacing: -0.018em;
+    color: var(--amber);
+  }
+  .ahero__text {
+    margin: 18px 0 32px;
+    max-width: 50ch;
+    font-size: 1.125rem;
+    color: var(--on-night-2);
+  }
+  .uses {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  }
+  .uses li {
+    padding: 26px;
+    border-radius: var(--r-lg);
+    background: var(--sand);
+    transition:
+      background-color 0.4s,
+      color 0.4s,
+      transform 0.5s var(--ease);
+  }
+  .uses li :global(svg) {
+    color: var(--teal-deep);
+    transition: color 0.4s;
+  }
+  .uses h3 {
+    margin: 44px 0 8px;
+    font-size: 1.3125rem;
+  }
+  .uses p {
+    color: var(--ink-2);
+    font-size: 0.9688rem;
+    transition: color 0.4s;
+  }
+  .uses li:hover {
+    background: var(--night);
+    color: var(--on-night);
+    transform: translateY(-3px);
+  }
+  .uses li:hover :global(svg) {
+    color: var(--amber);
+  }
+  .uses li:hover p {
+    color: var(--on-night-2);
+  }
+  .integ h3 {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .integ .icon-tile {
+    background: var(--paper);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .report__wrap {
+    display: grid;
+    gap: 48px 72px;
+    align-items: center;
+  }
+  .report__wrap .lead {
+    margin-top: 20px;
+  }
+  .ticks {
+    display: grid;
+    gap: 10px;
+    margin-top: 28px;
+    font-weight: 500;
+  }
+  .ticks li {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .ticks :global(svg) {
+    color: var(--teal-deep);
+    flex: none;
+  }
+  .report {
+    padding: 24px;
+    border-radius: var(--r-lg);
+    background: var(--night);
+    color: var(--on-night);
+    box-shadow: var(--shadow-2);
+    font-size: 0.9375rem;
+  }
+  .report__bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 20px;
+  }
+  .report__bar strong {
+    font-family: var(--font-display);
+    font-size: 1.1875rem;
+    font-weight: 600;
+  }
+  .report__bar span {
+    color: var(--on-night-2);
+    font-size: 0.8125rem;
+  }
+  .report__bars {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .report__bars li {
+    display: grid;
+    gap: 6px;
+  }
+  .report__bars i {
+    display: block;
+    height: 10px;
+    width: var(--w);
+    border-radius: 5px;
+    background: var(--teal-bright);
+    transform-origin: left;
+  }
+  .report__bars li:first-child i {
+    background: var(--amber);
+  }
+  :global(.js) .report[data-reveal] .report__bars i {
+    transform: scaleX(0);
+    transition: transform 1.2s var(--ease);
+    transition-delay: calc(0.25s + var(--i) * 0.1s);
+  }
+  :global(.js) .report.is-in .report__bars i {
+    transform: none;
+  }
+  .report table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+  .report th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--on-night-2);
+    font-size: 0.8125rem;
+    padding: 8px 0;
+  }
+  .report td {
+    padding: 10px 0;
+    border-top: 1px solid var(--night-line);
+  }
+  .report td:last-child,
+  .report th:last-child {
+    text-align: right;
+  }
+  .on-lead {
+    color: var(--on-night-2);
+  }
+  @media (min-width: 1000px) {
+    .ahero__in,
+    .report__wrap {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+</style>

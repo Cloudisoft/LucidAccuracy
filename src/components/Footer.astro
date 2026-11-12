@@ -1,0 +1,222 @@
+---
+import { site, locations, markets, solutions, industries } from '../data/site';
+import Logo from './Logo.astro';
+const year = new Date().getFullYear();
+---
+
+<footer class="footer on-night">
+  <div class="wrap">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <a href="/" aria-label="LucidAccuracy home"><Logo /></a>
+        <p>{site.positioning}</p>
+        <ul class="footer__contact">
+          <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+          <li><a href={site.phoneHref}>{site.phone}</a></li>
+        </ul>
+        {
+          site.social.length > 0 && (
+            <ul class="footer__social">
+              {site.social.map((s) => (
+                <li>
+                  <a href={s.url} rel="noopener">{s.label}</a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+
+      <nav class="footer__cols" aria-label="Footer">
+        <div>
+          <h2>Solutions</h2>
+          <ul>
+            {solutions.map((s) => <li><a href={`/solutions/${s.slug}/`}>{s.nav}</a></li>)}
+          </ul>
+        </div>
+        <div>
+          <h2>Industries</h2>
+          <ul>
+            {industries.slice(0, 6).map((i) => <li><a href={`/industries/#${i.slug}`}>{i.name}</a></li>)}
+            <li><a href="/industries/">All industries</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Technology & AI</h2>
+          <ul>
+            <li><a href="/technology-ai/">Technology & AI</a></li>
+            <li><a href="/products/">Products</a></li>
+            <li><a href="/ai-calling-agent/">LucidAI Calling Agent</a></li>
+            <li><a href="/projects/">Projects</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Company</h2>
+          <ul>
+            <li><a href="/about/">About Us</a></li>
+            <li><a href="/global-presence/">Global Presence</a></li>
+            <li><a href="/careers/">Careers</a></li>
+            <li><a href="/contact/">Contact</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="footer__places">
+      <div>
+        <h2>Markets we serve</h2>
+        <ul class="footer__markets">
+          {markets.map((m) => <li>{m.name}</li>)}
+        </ul>
+      </div>
+      <div>
+        <h2>U.S. offices</h2>
+        <ul class="footer__offices">
+          {
+            locations.map((l) => (
+              <li>
+                <strong>{l.state}</strong>
+                <address>
+                  {l.lines.map((line) => (
+                    <span>{line}</span>
+                  ))}
+                </address>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__base">
+      <p>© {year} LucidAccuracy. All rights reserved.</p>
+      <ul>
+        <li><a href="/privacy/">Privacy Policy</a></li>
+        <li><a href="/terms/">Terms of Use</a></li>
+        <li><a href={site.partner.url} rel="noopener">Partner: {site.partner.name}</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--night);
+    color: var(--on-night);
+    padding-block: clamp(56px, 7vw, 96px) 28px;
+    --logo-accent: var(--teal-bright);
+    font-size: 0.9688rem;
+  }
+  .footer__top {
+    display: grid;
+    gap: 48px;
+  }
+  .footer__brand p {
+    margin: 20px 0;
+    max-width: 44ch;
+    color: var(--on-night-2);
+  }
+  .footer__contact a {
+    display: inline-block;
+    padding-block: 8px;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .footer__social {
+    display: flex;
+    gap: 18px;
+    margin-top: 12px;
+  }
+  .footer__cols {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 36px 24px;
+  }
+  .footer h2 {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--on-night-2);
+    margin-bottom: 10px;
+  }
+  .footer__cols a,
+  .footer__base a,
+  .footer__social a {
+    display: inline-block;
+    padding-block: 7px;
+    background: linear-gradient(currentColor, currentColor) 0 calc(100% - 5px) / 0 1px no-repeat;
+    transition: background-size 0.4s var(--ease);
+  }
+  .footer__cols a:hover,
+  .footer__base a:hover,
+  .footer__social a:hover {
+    background-size: 100% 1px;
+  }
+  .footer__places {
+    display: grid;
+    gap: 36px;
+    margin-top: 56px;
+    padding-top: 36px;
+    border-top: 1px solid var(--night-line);
+  }
+  .footer__markets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 500;
+  }
+  .footer__offices {
+    display: grid;
+    gap: 22px;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  }
+  .footer__offices strong {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.0625rem;
+  }
+  .footer address {
+    font-style: normal;
+    color: var(--on-night-2);
+    margin-top: 4px;
+  }
+  .footer address span {
+    display: block;
+  }
+  .footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 32px;
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--night-line);
+    color: var(--on-night-2);
+    font-size: 0.875rem;
+    align-items: center;
+  }
+  .footer__base ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 24px;
+  }
+  @media (min-width: 760px) {
+    .footer__cols {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .footer__places {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    }
+  }
+  @media (min-width: 1100px) {
+    .footer__top {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr);
+      gap: 72px;
+    }
+  }
+</style>

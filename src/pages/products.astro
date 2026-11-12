@@ -1,0 +1,87 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import CallDemo from '../components/CallDemo.astro';
+import Cta from '../components/Cta.astro';
+import { agent } from '../data/site';
+const crumbs = [{ name: 'Products', href: '/products/' }];
+---
+
+<Base
+  title="AI Products | LucidAccuracy"
+  description="LucidAccuracy builds AI products for business automation, starting with the LucidAI Calling Agent for inbound and outbound phone conversations."
+  og="products"
+  {crumbs}
+>
+  <PageHero
+    title="AI products built by LucidAccuracy"
+    lead="Software we design, build and support ourselves. The first product automates business phone calls."
+    {crumbs}
+  />
+
+  <section class="section">
+    <div class="wrap product">
+      <div>
+        <p class="product__tag" data-reveal><Icon name="AudioLines" size={18} /> Available now</p>
+        <h2 data-reveal="mask" style="--i:1">{agent.name}</h2>
+        <p class="lead" data-reveal style="--i:2">{agent.description}</p>
+        <ul class="chips" data-reveal style="--i:3">
+          {agent.capabilities.map((c) => <li class="chip">{c.name}</li>)}
+        </ul>
+        <div class="actions" data-reveal style="--i:4">
+          <a href="/ai-calling-agent/" class="btn">Explore AI Calling Agent <Icon name="ArrowRight" /></a>
+          <a href="/contact/?topic=AI%20Calling%20Agent%20demo" class="btn btn--ghost">Book a Demo</a>
+        </div>
+      </div>
+      <div data-reveal="scale"><CallDemo /></div>
+    </div>
+  </section>
+
+  <section class="section section--sand">
+    <div class="wrap split">
+      <div class="split__head">
+        <h2 data-reveal="mask">A product line designed to grow</h2>
+      </div>
+      <div class="prose" data-reveal>
+        <p>
+          LucidAccuracy's product work comes out of the same teams that deliver technology projects for clients. When a
+          problem appears across many engagements, we build a product for it.
+        </p>
+        <p>
+          New AI products will be listed on this page as they are released. If you have a process you would like to
+          automate, <a href="/contact/?topic=Technology%20Solutions">tell our technology team about it</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <Cta title="See the AI Calling Agent at work" primary={{ label: 'Book a Demo', href: '/contact/?topic=AI%20Calling%20Agent%20demo' }} />
+</Base>
+
+<style>
+  .product {
+    display: grid;
+    gap: 48px 72px;
+    align-items: center;
+  }
+  .product__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+    font-weight: 600;
+    color: var(--teal-deep);
+  }
+  .product .lead {
+    margin: 20px 0 24px;
+  }
+  .product .actions {
+    margin-top: 32px;
+  }
+  @media (min-width: 1000px) {
+    .product {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    }
+  }
+</style>

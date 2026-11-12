@@ -1,0 +1,123 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Cta from '../components/Cta.astro';
+import { industries } from '../data/site';
+const crumbs = [{ name: 'Industries', href: '/industries/' }];
+---
+
+<Base
+  title="Industries We Serve | LucidAccuracy"
+  description="LucidAccuracy serves technology, healthcare, engineering, finance, life sciences, manufacturing, logistics, telecommunications, retail, energy and professional services."
+  og="industries"
+  {crumbs}
+>
+  <PageHero
+    title="Eleven industries, one partner"
+    lead="LucidAccuracy supplies talent, technology and operations support across the sectors below. Each engagement is led by people who know the roles and the regulations involved."
+    {crumbs}
+  >
+    <a href="/contact/" class="btn btn--amber">Talk to Our Team <Icon name="ArrowRight" /></a>
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap">
+      <ul class="ind">
+        {
+          industries.map((ind, i) => (
+            <li id={ind.slug} data-reveal style={`--i:${i % 2}`}>
+              <span class="ind__icon"><Icon name={ind.icon} size={28} stroke-width={1.6} /></span>
+              <div class="ind__main">
+                <h2>{ind.name}</h2>
+                <p>{ind.text}</p>
+              </div>
+              <ul class="chips">
+                {ind.roles.map((r) => <li class="chip">{r}</li>)}
+              </ul>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--sand">
+    <div class="wrap">
+      <div class="head head--split">
+        <h2 data-reveal="mask">What we deliver in every industry</h2>
+        <p data-reveal style="--i:1">The same three businesses, adapted to the sector.</p>
+      </div>
+      <ul class="panels">
+        <li data-reveal>
+          <a class="panel" href="/solutions/recruitment-workforce/">
+            <span class="icon-tile"><Icon name="Users" /></span>
+            <h3>Recruitment & Workforce</h3>
+            <p>Permanent, contract and flexible hiring for specialist and volume roles.</p>
+          </a>
+        </li>
+        <li data-reveal style="--i:1">
+          <a class="panel" href="/solutions/technology/">
+            <span class="icon-tile"><Icon name="Code" /></span>
+            <h3>Technology Solutions</h3>
+            <p>Software, cloud, data and security projects built for the sector's systems.</p>
+          </a>
+        </li>
+        <li data-reveal style="--i:2">
+          <a class="panel" href="/ai-calling-agent/">
+            <span class="icon-tile"><Icon name="AudioLines" /></span>
+            <h3>LucidAI Calling Agent</h3>
+            <p>Automated phone conversations for scheduling, screening and follow-ups.</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <Cta title="Hiring or building in your industry?" />
+</Base>
+
+<style>
+  .ind {
+    border-top: 1px solid var(--line);
+  }
+  .ind > li {
+    display: grid;
+    gap: 16px 40px;
+    padding: clamp(24px, 3vw, 40px) 0;
+    border-bottom: 1px solid var(--line);
+    scroll-margin-top: calc(var(--header-h) + 8px);
+    transition: background-color 0.4s;
+  }
+  .ind > li:target {
+    background: var(--teal-tint);
+    box-shadow: 0 0 0 100vmax var(--teal-tint);
+    clip-path: inset(0 -100vmax);
+  }
+  .ind__icon {
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    background: var(--teal-tint);
+    color: var(--teal-deep);
+  }
+  .ind h2 {
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    margin-bottom: 10px;
+  }
+  .ind__main p {
+    color: var(--ink-2);
+    max-width: 54ch;
+  }
+  .ind .chips {
+    align-content: start;
+  }
+  @media (min-width: 900px) {
+    .ind > li {
+      grid-template-columns: 60px minmax(0, 1fr) minmax(0, 0.9fr);
+      align-items: start;
+    }
+  }
+</style>

@@ -1,0 +1,104 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Cta from '../components/Cta.astro';
+import { site, industries, markets } from '../data/site';
+const crumbs = [{ name: 'Careers', href: '/careers/' }];
+const paths = [
+  { name: 'Roles with our clients', text: 'Permanent, contract and flexible positions with the organizations we recruit for, in every industry we serve.' },
+  { name: 'Roles at LucidAccuracy', text: 'Recruiters, engineers, trainers, consultants and operations specialists who work in our own teams.' },
+  { name: 'Training and career support', text: 'Technology training, interview preparation and professional development for people building their skills.' },
+];
+const steps = [
+  { name: 'Send your profile', text: 'Email your CV with the kind of role and the location you are looking for.' },
+  { name: 'Talk to a recruiter', text: 'A recruiter calls to understand your experience, goals and availability.' },
+  { name: 'Get matched', text: 'We put you forward for suitable roles and prepare you for each interview.' },
+  { name: 'Start with support', text: 'We stay in touch through onboarding and the first months in the role.' },
+];
+---
+
+<Base
+  title="Careers | Jobs and Opportunities with LucidAccuracy"
+  description="Find roles through LucidAccuracy across technology, healthcare, engineering, finance and more, or join our own team. Send your CV to start a conversation."
+  og="careers"
+  {crumbs}
+>
+  <PageHero
+    title="Careers with LucidAccuracy and our clients"
+    lead="Whether you want your next role with one of our clients or a place on our own team, the first step is the same: tell us about yourself."
+    {crumbs}
+  >
+    <a href={`mailto:${site.email}?subject=Career%20enquiry`} class="btn btn--amber">Send Your CV <Icon name="ArrowRight" /></a>
+    <a href="/contact/?topic=Careers" class="btn btn--ghost">Contact a Recruiter</a>
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap split">
+      <div class="split__head">
+        <h2 data-reveal="mask">Three ways to work with us</h2>
+      </div>
+      <ul class="rows">
+        {
+          paths.map((p, i) => (
+            <li data-reveal style={`--i:${i}`}>
+              <h3>{p.name}</h3>
+              <p>{p.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--sand">
+    <div class="wrap">
+      <div class="head head--split">
+        <h2 data-reveal="mask">Fields we hire in</h2>
+        <p data-reveal style="--i:1">
+          Roles across {industries.length} industries in {markets.map((m) => m.name).join(', ').replace(/, ([^,]*)$/, ' and $1')}.
+        </p>
+      </div>
+      <ul class="chips fields" data-reveal>
+        {industries.map((i) => <li class="chip"><Icon name={i.icon} size={16} /> {i.name}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--night">
+    <div class="wrap">
+      <div class="head">
+        <h2 data-reveal="mask">How applying works</h2>
+      </div>
+      <ol class="steps">
+        {
+          steps.map((st, i) => (
+            <li data-reveal style={`--i:${i}`}>
+              <h3>{st.name}</h3>
+              <p>{st.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <Cta
+    title="Ready for your next role?"
+    text={`Email your CV to ${site.email} and a recruiter will be in touch.`}
+    primary={{ label: 'Send Your CV', href: `mailto:${site.email}?subject=Career%20enquiry` }}
+  />
+</Base>
+
+<style>
+  .fields {
+    gap: 10px;
+  }
+  .fields .chip {
+    padding: 10px 18px;
+    font-size: 1rem;
+  }
+  .fields .chip :global(svg) {
+    color: var(--teal-deep);
+  }
+</style>

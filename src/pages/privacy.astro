@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { site } from '../data/site';
+const crumbs = [{ name: 'Privacy Policy', href: '/privacy/' }];
+---
+
+<Base title="Privacy Policy | LucidAccuracy" description="How LucidAccuracy collects, uses and protects personal information shared through this website and our services." og="default" {crumbs}>
+  <PageHero title="Privacy Policy" lead="Last updated November 2026" {crumbs} />
+  <section class="section">
+    <div class="wrap prose">
+      <p>
+        This policy explains how LucidAccuracy ("we", "us") handles personal information collected through
+        lucidaccuracy.com and in the course of providing our services.
+      </p>
+      <h2>Information we collect</h2>
+      <ul>
+        <li>Contact details you send us, such as your name, email address, phone number, company and message.</li>
+        <li>Career information you choose to share, such as a CV, work history and role preferences.</li>
+        <li>Basic technical information that web servers record, such as IP address and browser type.</li>
+      </ul>
+      <h2>How we use information</h2>
+      <ul>
+        <li>To reply to enquiries and provide the services you ask for.</li>
+        <li>To match candidates with suitable roles and present them to clients, with the candidate's agreement.</li>
+        <li>To operate, secure and improve our website and services.</li>
+        <li>To meet legal and regulatory obligations.</li>
+      </ul>
+      <h2>Sharing</h2>
+      <p>
+        We do not sell personal information. We share it only with clients and partners involved in a service you have
+        asked for, with service providers who process it on our behalf, and where the law requires.
+      </p>
+      <h2>Retention and security</h2>
+      <p>
+        We keep personal information for as long as it is needed for the purposes above and apply reasonable technical
+        and organizational measures to protect it.
+      </p>
+      <h2>Your rights</h2>
+      <p>
+        Depending on where you live, you may have rights to access, correct, delete or restrict the use of your personal
+        information. To make a request, email <a href={`mailto:${site.email}`}>{site.email}</a>.
+      </p>
+      <h2>Contact</h2>
+      <p>
+        Questions about this policy can be sent to <a href={`mailto:${site.email}`}>{site.email}</a> or by phone on
+        <a href={site.phoneHref}>{site.phone}</a>.
+      </p>
+    </div>
+  </section>
+</Base>
